@@ -1,5 +1,5 @@
-# COH App
+# HPA DB
 
-An App that will be used to for managing the a city's rental assets 
+Management system for health professional association. 
 
 Built with love using ASP.Net Core MVC 
