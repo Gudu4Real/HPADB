@@ -87,8 +87,8 @@ namespace BataCMS
 
             services.AddLiveReload();
 
-            var accountSid = Configuration["Twilio:AccountSID"];
-            var authToken = Configuration["Twilio:AuthToken"];
+            var accountSid = Environment.GetEnvironmentVariable("AccountSid");
+            var authToken = Environment.GetEnvironmentVariable("AuthToken");
             TwilioClient.Init(accountSid, authToken);
 
             services.Configure<TwilioVerifySettings>(Configuration.GetSection("Twilio"));

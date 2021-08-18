@@ -40,7 +40,7 @@
                     }
                     else
                     {
-                        <h1> Hi</h1>
+                        <h1>HPA Portal</h1>
                     }
 
                 </header>
@@ -55,8 +55,8 @@
                     else
                     {
                         <p>
-                            Welcome to Harare Yangu<br />
-                            Your portal to city services
+                            Welcome to the HPA Member Portal<br />
+                            Your portal to the Health Professions Association of Zimbabwe.
                         </p>
                     }
 
@@ -82,7 +82,7 @@
                 <article>
                     <header class="major">
                         <h3><a asp-action="BulletinIndex" asp-controller="Home" class="link">Bulletin Board</a></h3>
-                        <p>View Information and Announcements from the City Of Harare</p>
+                        <p>View Information and Announcements from the Health Profession Association</p>
                     </header>
                 </article>
 
@@ -97,36 +97,36 @@
 
                     <article>
                         <header class="major">
-                            <h3><a asp-action="ListCategories" asp-controller="Admin" class="link">Category Management</a></h3>
-                            <p>Manage the available categories</p>
+                            <h3><a asp-action="ListCategories" asp-controller="Admin" class="link">Facility Management</a></h3>
+                            <p>Manage the HPA facilities</p>
+                        </header>
+                    </article>
+
+
+                    @*                    <article>
+                            <header class="major">
+                                <h3><a asp-action="BookedList" asp-controller="RentalAsset" class="link">View Booked Assets</a></h3>
+                                <p>Manage the Rental Assets</p>
+                            </header>
+                        </article>
+
+                        <article>
+                            <header class="major">
+                                <h3><a asp-action="List" asp-controller="DispatchedService" class="link">View Dispatched Services</a></h3>
+                                <p>View Booking information</p>
+                            </header>
+                        </article>*@
+
+                    <article>
+                        <header class="major">
+                            <h3><a asp-action="ListTransactions" asp-controller="Transaction" class="link">Invoices</a></h3>
+                            <p>View Invoices</p>
                         </header>
                     </article>
 
                     <article>
                         <header class="major">
-                            <h3><a asp-action="ListServiceTypes" asp-controller="Admin" class="link">Service Management</a></h3>
-                            <p>Manage the available categories</p>
-                        </header>
-                    </article>
-
-                    <article>
-                        <header class="major">
-                            <h3><a asp-action="BookedList" asp-controller="RentalAsset" class="link">View Booked Assets</a></h3>
-                            <p>Manage the Rental Assets</p>
-                        </header>
-                    </article>
-
-                    <article>
-                        <header class="major">
-                            <h3><a asp-action="List" asp-controller="DispatchedService" class="link">View Dispatched Services</a></h3>
-                            <p>View Booking information</p>
-                        </header>
-                    </article>
-
-                    <article>
-                        <header class="major">
-                            <h3><a asp-action="ListTransactions" asp-controller="Transaction" class="link">Bookings</a></h3>
-                            <p>View Booking information</p>
+                            <h3><a asp-action="ListServiceTypes" asp-controller="Admin" class="link">Reports</a></h3>
                         </header>
                     </article>
 
@@ -136,6 +136,13 @@
                 {
                     <article>
                         <header class="major">
+                            <h3><a asp-controller="VendorApplication" asp-action="create" class="link">Membership Application</a></h3>
+                            <p>Apply for HPA Membership</p>
+                        </header>
+                    </article>
+
+                    <article>
+                        <header class="major">
                             <h3><a asp-action="MyApplications" asp-controller="VendorApplication" asp-route-applicantId="@UserManager.GetUserId(User)" class="link">My Applications</a></h3>
                             <p>View Current Status of Your Applications</p>
                         </header>
@@ -143,32 +150,24 @@
 
                     <article>
                         <header class="major">
-                            <h3><a asp-action="MyRequests" asp-controller="ServiceRequest" asp-route-applicantId="@UserManager.GetUserId(User)" class="link">My Service Requests</a></h3>
-                            <p>View Current Status of your service requests</p>
-                        </header>
-                    </article>
-
-
-                    <article>
-                        <header class="major">
-                            <h3><a asp-controller="VendorApplication" asp-action="create" class="link">Vendor Application</a></h3>
-                            <p>feugiat amet tempus</p>
+                            <h3><a asp-action="MyRequests" asp-controller="ServiceRequest" asp-route-applicantId="@UserManager.GetUserId(User)" class="link">View Facilities</a></h3>
+                            <p>View HPA Facilities</p>
                         </header>
                     </article>
 
                     <article>
                         <header class="major">
-                            <h3><a asp-action="OnDemandIndex" asp-controller="Home" class="link">On Demand Services</a></h3>
-                            <p>Request for personal services</p>
+                            <h3><a asp-action="OnDemandIndex" asp-controller="Home" class="link">View HPA Members</a></h3>
+                            <p>Search HPA Member information</p>
                         </header>
                     </article>
-
-                    <article>
-                        <header class="major">
-                            <h3><a href="#" class="link">Book Venue Application</a></h3>
-                            <p>Nisl sed aliquam</p>
-                        </header>
-                    </article>
+                    @*
+                        <article>
+                            <header class="major">
+                                <h3><a href="#" class="link">Book Venue Application</a></h3>
+                                <p>Nisl sed aliquam</p>
+                            </header>
+                        </article>*@
 
                 }
 
@@ -176,31 +175,52 @@
                 {
                     <article>
                         <header class="major">
-                            <h3><a asp-action="ListApplications" asp-controller="VendorApplication" class="link">View Applications</a></h3>
+                            <h3><a asp-action="ListApplications" asp-controller="VendorApplication" class="link">Member Applications</a></h3>
                             <p>View Applications</p>
                         </header>
                     </article>
 
+                    @*                    <article>
+                            <header class="major">
+                                <h3><a asp-action="ListRequests" asp-controller="ServiceRequest" class="link">View Facility Requests</a></h3>
+                                <p>View Pending Member Request to join a facility</p>
+                            </header>
+                        </article>
+
+                        <article>
+                            <header class="major">
+                                <h3><a asp-action="BookedList" asp-controller="RentalAsset" class="link">View Booked Assets</a></h3>
+                                <p>Manage the Rental Assets</p>
+                            </header>
+                        </article>*@
                     <article>
+
                         <header class="major">
-                            <h3><a asp-action="ListRequests" asp-controller="ServiceRequest" class="link">View Service Requests</a></h3>
-                            <p>View Pending Service Requests</p>
+                            <h3><a asp-action="List" asp-controller="RentalAsset" class="link">Facilites</a></h3>
+                            <p>View Facility Details</p>
                         </header>
                     </article>
 
                     <article>
                         <header class="major">
-                            <h3><a asp-action="BookedList" asp-controller="RentalAsset" class="link">View Booked Assets</a></h3>
-                            <p>Manage the Rental Assets</p>
+                            <h3><a href="#" class="link">Manage Certifications</a></h3>
+                            <p>View your Certifications</p>
                         </header>
                     </article>
-                    <article>
 
+                    <article>
                         <header class="major">
-                            <h3><a asp-action="List" asp-controller="RentalAsset" class="link">View Rental Assets</a></h3>
-                            <p>Manage the Rental Assets</p>
+                            <h3><a href="#" class="link">Member Payments</a></h3>
+                            <p>Manage member payments</p>
                         </header>
                     </article>
+
+                    <article>
+                        <header class="major">
+                            <h3><a asp-action="ListServiceTypes" asp-controller="Admin" class="link">Reports</a></h3>
+                        </header>
+                    </article>
+
 
 
                 }
@@ -209,8 +229,22 @@
                 {
                     <article>
                         <header class="major">
-                            <h3><a asp-action="List" asp-controller="RentalAsset" class="link">View Rental Assets</a></h3>
-                            <p>Manage the Rental Assets</p>
+                            <h3><a asp-action="List" asp-controller="RentalAsset" class="link">View Facilities</a></h3>
+                            <p>View the HPA Facilites</p>
+                        </header>
+                    </article>
+
+                    <article>
+                        <header class="major">
+                            <h3><a href="#" class="link">Membership</a></h3>
+                            <p>View Membership information and status</p>
+                        </header>
+                    </article>
+
+                    <article>
+                        <header class="major">
+                            <h3><a href="#" class="link">Member Certifications</a></h3>
+                            <p>View your Certifications</p>
                         </header>
                     </article>
 
@@ -220,7 +254,6 @@
                             <p>View Invoices of previous bookings</p>
                         </header>
                     </article>
-
                 }
 
             </section>

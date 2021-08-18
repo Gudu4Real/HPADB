@@ -12,7 +12,10 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "AccountSid": "ACba569dbc854ffb87894bef108ab716fa",
+        "AuthToken": "ef61c05cab95afa11da5fc459b2631e1",
+        "VerificationServiceSID": "VAe3ac61dee984d7cb7547db65c7f77286"
       }
     },
     "BataCMS": {
