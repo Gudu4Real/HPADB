@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace COHApp.Data.Interfaces
 {
-    public interface IVendorApplicaitonRepository
+    public interface IMemberApplicaitonRepository
     {
-        IEnumerable<VendorApplication> vendorApplications { get; }
+        IEnumerable<MemberApplication> vendorApplications { get; }
 
-        Task<VendorApplication> AddAsync(VendorApplication application);
+        Task<MemberApplication> AddAsync(MemberApplication application);
 
-        Task<VendorApplication> GetApplicationByIdAsync(int applicationId);
+        Task<MemberApplication> GetApplicationByIdAsync(int applicationId);
 
-        Task UpdateApplicationAsync(VendorApplication application);
+        Task UpdateApplicationAsync(MemberApplication application);
 
     }
 }

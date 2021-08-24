@@ -23,17 +23,17 @@ namespace COHApp.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IRentalAssetRepository _rentalAssetRepository;
+        private readonly IHPAFacilityRepository _HPAFacilityRepository;
         private readonly IServiceTypeRepository _serviceTypeRepository;
 
 
 
-        public AdminController(IServiceTypeRepository serviceTypeRepository, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, ICategoryRepository categoryRepository, IRentalAssetRepository rentalAssetRepository)
+        public AdminController(IServiceTypeRepository serviceTypeRepository, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, ICategoryRepository categoryRepository, IHPAFacilityRepository hPAFacilityRepository)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _categoryRepository = categoryRepository;
-            _rentalAssetRepository = rentalAssetRepository;
+            _HPAFacilityRepository = hPAFacilityRepository;
             _serviceTypeRepository = serviceTypeRepository;
         }   
 
@@ -117,7 +117,7 @@ namespace COHApp.Controllers
                 return View("NotFound");
             }
 
-            IEnumerable<RentalAsset> unitItems = _rentalAssetRepository.rentalAssets.Where(p => p.CategoryId == _categoryId);
+            IEnumerable<HPAFacility> unitItems = _HPAFacilityRepository.HPAFacilities.Where(p => p.CategoryId == _categoryId);
 
             var model = new EditCategoryViewModel
             {

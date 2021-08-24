@@ -15,11 +15,11 @@ namespace COHApp.Controllers
 {
     public class LeaseController : Controller
     {
-        private readonly ILeaseRepository _leaseRepository;
-        private readonly UserManager<VendorUser> _vendorUserManager;
+        private readonly IMemberSubscriptionRepository _leaseRepository;
+        private readonly UserManager<MemberUser> _vendorUserManager;
 
 
-        public LeaseController(ILeaseRepository leaseRepository, UserManager<VendorUser> userManager)
+        public LeaseController(IMemberSubscriptionRepository leaseRepository, UserManager<MemberUser> userManager)
         {
             _leaseRepository = leaseRepository;
             _vendorUserManager = userManager;
@@ -46,7 +46,7 @@ namespace COHApp.Controllers
         public async Task<IActionResult> CashBooking(AddLeaseViewModel model)
         {
 
-            VendorUser vendorUser = await _vendorUserManager.FindByPhoneNumber(ProcessPhoneNumber(model.VendorPhone));
+            MemberUser vendorUser = await _vendorUserManager.FindByPhoneNumber(ProcessPhoneNumber(model.VendorPhone));
 
             // add the to the lease 
             if (ModelState.IsValid)
@@ -57,15 +57,15 @@ namespace COHApp.Controllers
                     return View();
                 }
 
-                Lease lease = new Lease
+                MemberSubscription subscription = new MemberSubscription
                 {
                     UserId = vendorUser.Id,
-                    RentalAssetId = model.RentalAssetId,
-                    leaseFrom = model.leaseFrom,
-                    leaseTo = model.leaseTo
+                    /*RentalAssetId = model.RentalAssetId,*/
+                    From = model.leaseFrom,
+                    To = model.leaseTo
                 };
-                var success =  await _leaseRepository.AddLeaseAsync(lease);
-                return RedirectToAction("Checkout", "Transaction", new {leaseId = success.LeaseId });
+                var success =  await _leaseRepository.AddAsync(subscription);
+                return RedirectToAction("Checkout", "Transaction", new {leaseId = success.MemberSubscriptionId });
             }
 
             return View();
@@ -73,14 +73,14 @@ namespace COHApp.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> MakeBooking(Lease lease)
+        public async Task<IActionResult> MakeBooking(MemberSubscription lease)
         {
             // add the to the lease 
             if (ModelState.IsValid)
             {
-                var success = await _leaseRepository.AddLeaseAsync(lease);
+                var success = await _leaseRepository.AddAsync(lease);
 
-                return RedirectToAction("Checkout", "Transaction", new { leaseId = success.LeaseId });
+                return RedirectToAction("Checkout", "Transaction", new { leaseId = success.MemberSubscriptionId });
             }
 
             return View(lease);

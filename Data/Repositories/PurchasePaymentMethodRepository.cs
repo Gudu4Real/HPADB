@@ -17,13 +17,13 @@ namespace BataCMS.Data.Repositories
             _appDbContext = appDbContext;
         }
 
-        public void AddPurchasePaymentMethod(Lease purchasePaymentMethod)
+        public void AddPurchasePaymentMethod(MemberSubscription purchasePaymentMethod)
         {
             _appDbContext.AddAsync(purchasePaymentMethod);
             _appDbContext.SaveChanges();
         }
 
-        public Lease GetPurchasePaymentMethodByPurchaseId(int purchaseId)
+        public MemberSubscription GetPurchasePaymentMethodByPurchaseId(int purchaseId)
         {
             throw new NotImplementedException();
         }

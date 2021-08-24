@@ -19,20 +19,20 @@ namespace COHApp.Controllers
 {
     public class TransactionController : Controller
     {
-        private readonly ILeaseRepository _leaseRepository;
-        private readonly IRentalAssetRepository _rentalAssetRepository;
+        private readonly IMemberSubscriptionRepository _leaseRepository;
+        private readonly IHPAFacilityRepository _HPAFacilityRepository;
         private readonly ITransactionRepository _transactionRepository;
-        private readonly IActiveLeaseRepository _activeLeaseRepository;
+        private readonly IMemberCertificateRepository _activeLeaseRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly UserManager<VendorUser> _vendorUserManager;
+        private readonly UserManager<MemberUser> _vendorUserManager;
 
 
 
 
-        public TransactionController(UserManager<VendorUser> vendorUserManager, ILeaseRepository leaseRepository, UserManager<ApplicationUser> userManager, IRentalAssetRepository rentalAssetRepository, ITransactionRepository transactionRepository, IActiveLeaseRepository activeLeaseRepository)
+        public TransactionController(UserManager<MemberUser> vendorUserManager, IMemberSubscriptionRepository leaseRepository, UserManager<ApplicationUser> userManager, IHPAFacilityRepository hPAFacilityRepository, ITransactionRepository transactionRepository, IMemberCertificateRepository activeLeaseRepository)
         {
             _leaseRepository = leaseRepository;
-            _rentalAssetRepository = rentalAssetRepository;
+            _HPAFacilityRepository = hPAFacilityRepository;
             _userManager = userManager;
             _transactionRepository = transactionRepository;
             _activeLeaseRepository = activeLeaseRepository;
@@ -51,15 +51,15 @@ namespace COHApp.Controllers
 
             this.ViewData["paymentOptions"] = paymentOptions;
 
-            Lease lease = await _leaseRepository.GetLeaseById(leaseId);
-            RentalAsset rentalAsset = await _rentalAssetRepository.GetItemByIdAsync(lease.RentalAssetId);
+            MemberSubscription lease = await _leaseRepository.GetById(leaseId);
+            /*HPAFacility rentalAsset = await _rentalAssetRepository.GetItemByIdAsync(lease.RentalAssetId);*/
 
-            var totalDays = (lease.leaseTo - lease.leaseFrom).TotalDays;
-            decimal transactionTotal = rentalAsset.Price * (decimal)totalDays;
+            var totalDays = (lease.From - lease.To).TotalDays;
+            decimal transactionTotal = 0M;//rentalAsset.Price * (decimal)totalDays;
 
             TransactionCheckoutViewModel vm = new TransactionCheckoutViewModel()    
             {
-                AssetPricing = rentalAsset.Price,
+                AssetPricing = 0M,//rentalAsset.Price,
                 RentalDuration = totalDays,
                 TransactionTotal = transactionTotal
             };
@@ -121,8 +121,8 @@ namespace COHApp.Controllers
         public async Task<IActionResult> CheckoutAsync(TransactionCheckoutViewModel model)
         {
             //get the lease
-            Lease lease = await _leaseRepository.GetLeaseById(model.LeaseId);
-            RentalAsset rentalAsset = await _rentalAssetRepository.GetItemByIdAsync(lease.RentalAssetId);
+            MemberSubscription lease = await _leaseRepository.GetById(model.LeaseId);
+            /*HPAFacility rentalAsset = await _rentalAssetRepository.GetItemByIdAsync(lease.RentalAssetId);*/
 
             string transactionType;
 
@@ -135,8 +135,8 @@ namespace COHApp.Controllers
                 transactionType = "Cash";
             }
 
-            var totalDays = (lease.leaseTo - lease.leaseFrom).TotalDays;
-            decimal transactionTotal = rentalAsset.Price * (decimal)totalDays;
+            var totalDays = (lease.From - lease.To).TotalDays;
+            decimal transactionTotal = 0M;//rentalAsset.Price * (decimal)totalDays;
 
             if (ModelState.IsValid)
             {
@@ -147,14 +147,14 @@ namespace COHApp.Controllers
                     TransactionDate = DateTime.Now,
                     TransactionNotes = model.TransactionNotes,
                     TransactionType = transactionType,
-                    LeaseId = lease.LeaseId,
+                    /*LeaseId = lease.MemberSubscriptionId,*/
                     VendorUserId = lease.UserId,
                 };
 
-                var ActiveLease = new ActiveLease
+                var ActiveLease = new MemberCertificate
                 { 
-                    RentalAssetId = rentalAsset.RentalAssetId,
-                    LeaseId = lease.LeaseId
+                    /*RentalAssetId = rentalAsset.HPAFacilityId,*/
+                    /*LeaseId = lease.MemberSubscriptionId*/
                 };
 
 
@@ -163,9 +163,9 @@ namespace COHApp.Controllers
                 //success 
                 if (result > 0)
                 {
-                    await _rentalAssetRepository.BookAsset(lease.leaseTo, rentalAsset.RentalAssetId);
+                    /*await _rentalAssetRepository.BookAsset(lease.leaseTo, rentalAsset.HPAFacilityId);*/
                     await _activeLeaseRepository.AddActiveLeaseAsync(ActiveLease);
-                    await _leaseRepository.RemoveUnPaidLeases();
+/*                    await _leaseRepository.RemoveUnPaidLeases();*/
                 }
 
                 return RedirectToAction("CheckoutComplete");
@@ -226,22 +226,22 @@ namespace COHApp.Controllers
 
             Transaction transaction = await _transactionRepository.GetPurchaseByIdAsync(Id);
 
-            Lease lease = transaction.Lease;
+            /*MemberSubscription lease = transaction.Lease;*/
 
-            RentalAsset rentalAsset = await _rentalAssetRepository.GetItemByIdAsync(lease.RentalAssetId);
+            /*HPAFacility rentalAsset = await _rentalAssetRepository.GetItemByIdAsync(lease.RentalAssetId);*/
 
-            VendorUser vendor = await _vendorUserManager.FindByIdAsync(lease.UserId);
+           /* MemberUser vendor = await _vendorUserManager.FindByIdAsync(lease.UserId);*/
 
             ApplicationUser server = await _userManager.FindByIdAsync(transaction.ServerId);
 
 
             var vm = new TransactionDetailViewModel
             {
-                RentalAsset = rentalAsset,
+               /* RentalAsset = rentalAsset,*/
                 Transaction = transaction,
-                VendorUser = vendor,
+                /*VendorUser = vendor,*/
                 Server = server,
-                Lease = lease 
+                /*Lease = lease */
             };
 
             return View(vm);

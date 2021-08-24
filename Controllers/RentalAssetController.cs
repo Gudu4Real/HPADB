@@ -22,10 +22,10 @@ namespace COHApp.Controllers
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IRentalAssetRepository _rentalAssetRepository;
-        private readonly IActiveLeaseRepository _activeLeaseRepository;
+        private readonly IHPAFacilityRepository _HPAFacilityRepository;
+        private readonly IMemberCertificateRepository _activeLeaseRepository;
         private readonly IImageRepository _imageRepository;
-        private readonly ILeaseRepository _leaseRepository;
+        private readonly IMemberSubscriptionRepository _leaseRepository;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -33,11 +33,11 @@ namespace COHApp.Controllers
 
 
 
-        public RentalAssetController(IInvoiceRepository invoiceRepository, UserManager<ApplicationUser> userManager, ICategoryRepository categoryRepository, IWebHostEnvironment webHostEnvironment, IRentalAssetRepository rentalAssetRepository, IImageRepository imageRepository, IActiveLeaseRepository activeLeaseRepository, ILeaseRepository leaseRepository)
+        public RentalAssetController(IInvoiceRepository invoiceRepository, UserManager<ApplicationUser> userManager, ICategoryRepository categoryRepository, IWebHostEnvironment webHostEnvironment, IHPAFacilityRepository hPAFacilityRepository, IImageRepository imageRepository, IMemberCertificateRepository activeLeaseRepository, IMemberSubscriptionRepository leaseRepository)
         {
             _categoryRepository = categoryRepository;
             _webHostEnvironment = webHostEnvironment;
-            _rentalAssetRepository = rentalAssetRepository;
+            _HPAFacilityRepository = hPAFacilityRepository;
             _imageRepository = imageRepository;
             _activeLeaseRepository = activeLeaseRepository;
             _leaseRepository = leaseRepository;
@@ -50,22 +50,22 @@ namespace COHApp.Controllers
         public ViewResult List(string category, string searchString)
         {
             string _category = category;
-            IEnumerable<RentalAsset> rentalasset;
+            IEnumerable<HPAFacility> rentalasset;
 
             string currentCategory = string.Empty;
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                rentalasset = _rentalAssetRepository.rentalAssets.Where(p => p.Name.Contains(searchString));
+                rentalasset = _HPAFacilityRepository.HPAFacilities.Where(p => p.Name.Contains(searchString));
             }
             else if (!string.IsNullOrEmpty(category))
             {
-                rentalasset = _rentalAssetRepository.rentalAssets.Where(p => p.Category.CategoryName.Equals(_category));
+                rentalasset = _HPAFacilityRepository.HPAFacilities.Where(p => p.Category.CategoryName.Equals(_category));
                 currentCategory = _category;
             }
             else
             {
-                rentalasset = _rentalAssetRepository.rentalAssets.OrderBy(p => p.RentalAssetId);
+                rentalasset = _HPAFacilityRepository.HPAFacilities.OrderBy(p => p.HPAFacilityId);
                 currentCategory = "All Stalls";
             }
 
@@ -81,22 +81,22 @@ namespace COHApp.Controllers
         public ViewResult BookedList(string category, string searchString)
         {
             string _category = category;
-            IEnumerable<RentalAsset> rentalasset;
+            IEnumerable<HPAFacility> rentalasset;
 
             string currentCategory = string.Empty;
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                rentalasset = _rentalAssetRepository.rentalAssets.Where(p => p.Name.Contains(searchString)).Where(p => p.IsAvailable == false);
+                rentalasset = _HPAFacilityRepository.HPAFacilities.Where(p => p.Name.Contains(searchString)).Where(p => p.IsAvailable == false);
             }
             else if (!string.IsNullOrEmpty(category))
             {
-                rentalasset = _rentalAssetRepository.rentalAssets.Where(p => p.Category.CategoryName.Equals(_category)).Where(p => p.IsAvailable == false);
+                rentalasset = _HPAFacilityRepository.HPAFacilities.Where(p => p.Category.CategoryName.Equals(_category)).Where(p => p.IsAvailable == false);
                 currentCategory = _category;
             }
             else
             {
-                rentalasset = _rentalAssetRepository.rentalAssets.Where(p => p.IsAvailable == false).OrderBy(p => p.RentalAssetId);
+                rentalasset = _HPAFacilityRepository.HPAFacilities.Where(p => p.IsAvailable == false).OrderBy(p => p.HPAFacilityId);
                 currentCategory = "All Stalls";
             }
 
@@ -113,11 +113,11 @@ namespace COHApp.Controllers
         public async Task<IActionResult> EndBooking(int id)
         {
 
-            RentalAsset rentalAsset = await _rentalAssetRepository.GetItemByIdAsync(id);
+            HPAFacility rentalAsset = await _HPAFacilityRepository.GetItemByIdAsync(id);
 
-            ActiveLease activeLease =  _activeLeaseRepository.GetActiveLeaseByAssetId(rentalAsset.RentalAssetId);
+            /*ActiveLease activeLease = _activeLeaseRepository.GetActiveLeaseByAssetId(rentalAsset.HPAFacilityId);*/
 
-            Lease lease = await _leaseRepository.GetLeaseById(activeLease.LeaseId);
+            MemberSubscription lease = await _leaseRepository.GetById(id/*activeLease.LeaseId*/);
 
             ApplicationUser user = await _userManager.FindByIdAsync(lease.UserId);
 
@@ -134,24 +134,21 @@ namespace COHApp.Controllers
                     {
                         // Calculate amount paid
 
-                        var totalDays = (lease.leaseTo - lease.leaseFrom).TotalDays;
+                        var totalDays = (lease.From - lease.To).TotalDays;
                         decimal AmountPaid = rentalAsset.Price * (decimal)totalDays;
 
                         //Add invoice 
                         var invoice = new Invoice 
                         {
-                            RentalAssetId = rentalAsset.RentalAssetId,
-                            LeaseFrom = lease.leaseFrom,
-                            LeaseTo = lease.leaseTo,
                             ApplicationId = user.Id,
-                            AmountPaid = AmountPaid
+                            AmountDue = AmountPaid
                         };
 
                        await _invoiceRepository.AddInvoice(invoice);
                         
                     }
-                    await _rentalAssetRepository.EndBooking(id);
-                    await _activeLeaseRepository.RemoveLease(activeLease);
+                    await _HPAFacilityRepository.EndBooking(id);
+                    /*await _activeLeaseRepository.RemoveLease(activeLease);*/
                     return RedirectToAction("BookedList");
                 }
                 catch (Exception ex)
@@ -164,7 +161,7 @@ namespace COHApp.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewAsync(int itemId)
         {
-            RentalAsset unitItem = await _rentalAssetRepository.GetItemByIdAsync(itemId);
+            HPAFacility unitItem = await _HPAFacilityRepository.GetItemByIdAsync(itemId);
             return View(unitItem);
         }
 
@@ -208,7 +205,7 @@ namespace COHApp.Controllers
 
                 var category = _categoryRepository.Categories.FirstOrDefault(p => p.CategoryName == model.Category);
 
-                RentalAsset newRentalAsset = new RentalAsset
+                HPAFacility newRentalAsset = new HPAFacility
                 {
                     Name = model.Name,
                     Price = model.Price,
@@ -217,11 +214,11 @@ namespace COHApp.Controllers
                     CategoryId = category.CategoryId,
                     ImageUrl = mainPhotoPath,
                     Description = model.Description,
-                    Images = assetImages
+                    /*Images = assetImages*/
                 };
 
-                await _rentalAssetRepository.AddAsync(newRentalAsset);
-                return RedirectToAction("List", new { id = newRentalAsset.RentalAssetId });
+                await _HPAFacilityRepository.AddAsync(newRentalAsset);
+                return RedirectToAction("List", new { id = newRentalAsset.HPAFacilityId });
 
             }
             return View();
@@ -236,12 +233,12 @@ namespace COHApp.Controllers
                 Text = x.CategoryName
             }).ToList();
 
-            RentalAsset rentalAsset = await _rentalAssetRepository.GetItemByIdAsync(id);
+            HPAFacility rentalAsset = await _HPAFacilityRepository.GetItemByIdAsync(id);
             Category category = _categoryRepository.Categories.FirstOrDefault(p => p.CategoryId == rentalAsset.CategoryId);
 
             EditRentalAssetViewModel editRentalAssetViewModel = new EditRentalAssetViewModel
             {
-                RentalAssetId = rentalAsset.RentalAssetId,
+                RentalAssetId = rentalAsset.HPAFacilityId,
                 Name = rentalAsset.Name,
                 Price = rentalAsset.Price,
                 Location = rentalAsset.Location,
@@ -249,7 +246,7 @@ namespace COHApp.Controllers
                 Category = category.CategoryName,
                 ExistingImagePath = rentalAsset.ImageUrl,
                 Description = rentalAsset.Description,
-                ExistingImages = rentalAsset.Images
+                /*ExistingImages = rentalAsset.Images*/
             };
             return View(editRentalAssetViewModel);
         }
@@ -261,7 +258,7 @@ namespace COHApp.Controllers
             {
                 List<Image> assetImages = new List<Image>();
                 List<Image> deleteImages = new List<Image>();
-                RentalAsset rentalAsset = await _rentalAssetRepository.GetItemByIdAsync(model.RentalAssetId);
+                HPAFacility rentalAsset = await _HPAFacilityRepository.GetItemByIdAsync(model.RentalAssetId);
                 Category category = _categoryRepository.Categories.FirstOrDefault(p => p.CategoryName == model.Category);
 
 
@@ -283,13 +280,13 @@ namespace COHApp.Controllers
                             string filePath = Path.Combine(_webHostEnvironment.WebRootPath + model.ExistingImagePath);
                             System.IO.File.Delete(filePath);
                         }
-                        foreach (var item in rentalAsset.Images)
+/*                        foreach (var item in rentalAsset.Images)
                         {
                             deleteImages.Add(item);
                             string filePath = Path.Combine(_webHostEnvironment.WebRootPath + item.ImageUrl);
                             System.IO.File.Delete(filePath);
                         }
-
+*/
                         for (int i = 0; i < model.Images.Count; i++)
                         {
                             if (i == 0)
@@ -305,10 +302,10 @@ namespace COHApp.Controllers
                         }
                     }
 
-                    rentalAsset.Images = assetImages;
+                    /*rentalAsset.Images = assetImages;*/
                 }
 
-                await _rentalAssetRepository.EditItemAsync(rentalAsset);
+                await _HPAFacilityRepository.EditItemAsync(rentalAsset);
 
                 foreach (var item in deleteImages)
                 {
@@ -323,7 +320,7 @@ namespace COHApp.Controllers
 
         public async Task<IActionResult> DeleteItemAsync(int id)
         {
-            var unitItem = _rentalAssetRepository.GetItemByIdAsync(id);
+            var unitItem = _HPAFacilityRepository.GetItemByIdAsync(id);
 
             if (unitItem == null)
             {
@@ -332,7 +329,7 @@ namespace COHApp.Controllers
             }
             else
             {
-                var result = await _rentalAssetRepository.DeleteItem(id);
+                var result = await _HPAFacilityRepository.DeleteItem(id);
 
                 //success
                 if (result > 0)

@@ -37,12 +37,12 @@
                             @foreach (var line in Model.Applications)
                             {
                                 <tr>
-                                    <td class="text-center">@line.VendorApplicationId</td>
+                                    <td class="text-center">@line.MemberApplicationId</td>
                                     <td class="text-left">@line.ApplicantName</td>
                                     <td class="text-right">
                                         @line.ApplicationDate)
                                     </td>
-                                    <td class="text-center"><a class="btn btn-primary" asp-controller="VendorApplication" asp-action="ViewApplication" asp-route-applicationId="@line.VendorApplicationId"> View</a></td>
+                                    <td class="text-center"><a class="btn btn-primary" asp-controller="VendorApplication" asp-action="ViewApplication" asp-route-applicationId="@line.MemberApplicationId"> View</a></td>
                                 </tr>
                             }
                         }

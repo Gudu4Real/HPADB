@@ -1,39 +1,39 @@
 ﻿@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> signInManager
-@model BataCMS.Data.Models.RentalAsset
+@model BataCMS.Data.Models.HPAFacility
 
 <span class="image fit"><img src="@Model.ImageUrl" alt="" /></span>
 <div class="box alt">
     <h3>@Model.Location</h3>
     <h3>@Model.Category.CategoryName</h3>
     <br>
-    <a id="cartButton" asp-controller="RentalAsset" asp-action="View" asp-route-itemId="@Model.RentalAssetId" type="button" class="btn button">View</a>
+    <a id="cartButton" asp-controller="RentalAsset" asp-action="View" asp-route-itemId="@Model.HPAFacilityId" type="button" class="btn button">View</a>
 
     @if (signInManager.IsSignedIn(User) && User.IsInRole("Vendor") && Model.IsAvailable == true)
     {
         <ul class="actions">
-            <li><br /><a asp-action="MakeBooking" asp-controller="Lease" asp-route-rentalAssetId="@Model.RentalAssetId" type="button" class="btn button special"> Make A Booking</a></li>
+            <li><br /><a asp-action="MakeBooking" asp-controller="Lease" asp-route-rentalAssetId="@Model.HPAFacilityId" type="button" class="btn button special"> Make A Booking</a></li>
         </ul>
     }
 
     @if (signInManager.IsSignedIn(User) && User.IsInRole("Employee"))
     {
 
-        <br /><a asp-action="Edit" asp-controller="RentalAsset" asp-route-id="@Model.RentalAssetId" type="button" class="btn button">Edit</a>
+        <br /><a asp-action="Edit" asp-controller="RentalAsset" asp-route-id="@Model.HPAFacilityId" type="button" class="btn button">Edit</a>
 
         <ul class="actions">
-            <li><br /><a asp-action="CashBooking" asp-controller="Lease" asp-route-rentalAssetId="@Model.RentalAssetId" type="button" class="btn button special"> Cash Booking</a></li>
+            <li><br /><a asp-action="CashBooking" asp-controller="Lease" asp-route-rentalAssetId="@Model.HPAFacilityId" type="button" class="btn button special"> Cash Booking</a></li>
         </ul>
     }
 
     @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin") && Model.IsAvailable == false && !(DateTime.Now >= Model.BookTillDate))
     {
 
-        <br /><a asp-action="EndBooking" asp-controller="RentalAsset" asp-route-id="@Model.RentalAssetId" type="button" class="btn button">Cancel Booking</a>
+        <br /><a asp-action="EndBooking" asp-controller="RentalAsset" asp-route-id="@Model.HPAFacilityId" type="button" class="btn button">Cancel Booking</a>
     }
 
     @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin") && Model.IsAvailable == false && DateTime.Now >= Model.BookTillDate)
     {
-        <br /><a asp-action="EndBooking" asp-controller="RentalAsset" asp-route-id="@Model.RentalAssetId" type="button" class="btn button">Invoice</a>
+        <br /><a asp-action="EndBooking" asp-controller="RentalAsset" asp-route-id="@Model.HPAFacilityId" type="button" class="btn button">Invoice</a>
 
     }
 </div>

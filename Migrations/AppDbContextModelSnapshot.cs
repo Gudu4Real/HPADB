@@ -109,57 +109,9 @@ namespace BataCMS.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
                 });
 
-            modelBuilder.Entity("BataCMS.Data.Models.Lease", b =>
+            modelBuilder.Entity("BataCMS.Data.Models.HPAFacility", b =>
                 {
-                    b.Property<int>("LeaseId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("RentalAssetId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("leaseFrom")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("leaseTo")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("LeaseId");
-
-                    b.HasIndex("RentalAssetId");
-
-                    b.ToTable("Leases");
-                });
-
-            modelBuilder.Entity("BataCMS.Data.Models.PaymentMethod", b =>
-                {
-                    b.Property<int>("PaymentMethodId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("AmountPaid")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("PaymentMethodName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isConfirmed")
-                        .HasColumnType("bit");
-
-                    b.HasKey("PaymentMethodId");
-
-                    b.ToTable("PaymentMethods");
-                });
-
-            modelBuilder.Entity("BataCMS.Data.Models.RentalAsset", b =>
-                {
-                    b.Property<int>("RentalAssetId")
+                    b.Property<int>("HPAFacilityId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -185,6 +137,9 @@ namespace BataCMS.Migrations
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("MemberUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -192,11 +147,59 @@ namespace BataCMS.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("RentalAssetId");
+                    b.HasKey("HPAFacilityId");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("RentalAssets");
+                    b.HasIndex("MemberUserId");
+
+                    b.ToTable("HPAFacilities");
+                });
+
+            modelBuilder.Entity("BataCMS.Data.Models.MemberSubscription", b =>
+                {
+                    b.Property<int>("MemberSubscriptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("From")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HPAFacilityId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("To")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MemberSubscriptionId");
+
+                    b.ToTable("MemberSubscriptions");
+                });
+
+            modelBuilder.Entity("BataCMS.Data.Models.PaymentMethod", b =>
+                {
+                    b.Property<int>("PaymentMethodId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PaymentMethodName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isConfirmed")
+                        .HasColumnType("bit");
+
+                    b.HasKey("PaymentMethodId");
+
+                    b.ToTable("PaymentMethods");
                 });
 
             modelBuilder.Entity("BataCMS.Data.Models.Transaction", b =>
@@ -205,9 +208,6 @@ namespace BataCMS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("LeaseId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ServerId")
                         .IsRequired()
@@ -235,31 +235,7 @@ namespace BataCMS.Migrations
 
                     b.HasKey("TransactionId");
 
-                    b.HasIndex("LeaseId");
-
                     b.ToTable("Transactions");
-                });
-
-            modelBuilder.Entity("COHApp.Data.Models.ActiveLease", b =>
-                {
-                    b.Property<int>("ActiveLeaseId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("LeaseId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RentalAssetId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ActiveLeaseId");
-
-                    b.HasIndex("LeaseId");
-
-                    b.HasIndex("RentalAssetId");
-
-                    b.ToTable("ActiveLeases");
                 });
 
             modelBuilder.Entity("COHApp.Data.Models.Category", b =>
@@ -316,18 +292,18 @@ namespace BataCMS.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("HPAFacilityId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("RentalAssetId")
-                        .HasColumnType("int");
-
                     b.HasKey("ImageId");
 
-                    b.HasIndex("RentalAssetId");
+                    b.HasIndex("HPAFacilityId");
 
                     b.ToTable("Image");
                 });
@@ -339,7 +315,7 @@ namespace BataCMS.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("AmountPaid")
+                    b.Property<decimal>("AmountDue")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ApplicationId")
@@ -348,22 +324,85 @@ namespace BataCMS.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("LeaseFrom")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("LeaseTo")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("RentalAssetId")
-                        .HasColumnType("int");
-
                     b.HasKey("InvoiceId");
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("RentalAssetId");
-
                     b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("COHApp.Data.Models.MemberApplication", b =>
+                {
+                    b.Property<int>("MemberApplicationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ApplicantId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApplicantName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ApplicationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IdProofUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RejectMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResidencyProofUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MemberApplicationId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("MemberApplications");
+                });
+
+            modelBuilder.Entity("COHApp.Data.Models.MemberCertificate", b =>
+                {
+                    b.Property<int>("MemberCertificateId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("HPAFacilityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MemberUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ValidTo")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MemberCertificateId");
+
+                    b.HasIndex("MemberUserId");
+
+                    b.ToTable("MemberCertificates");
                 });
 
             modelBuilder.Entity("COHApp.Data.Models.Message", b =>
@@ -450,123 +489,6 @@ namespace BataCMS.Migrations
                     b.HasKey("ServiceTypeId");
 
                     b.ToTable("ServiceTypes");
-                });
-
-            modelBuilder.Entity("COHApp.Data.Models.VendorApplication", b =>
-                {
-                    b.Property<int>("VendorApplicationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ApplicantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ApplicantName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ApplicationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("IdProofUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RejectMessage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ResidencyProofUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("VendorApplicationId");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("VendorApplications");
-                });
-
-            modelBuilder.Entity("COHApp.Data.Models.WasteCollection", b =>
-                {
-                    b.Property<int>("WasteCollectionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("DateModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Fri")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Mon")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Sat")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ServiceArea")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Sun")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Thur")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Tue")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Wed")
-                        .HasColumnType("bit");
-
-                    b.HasKey("WasteCollectionId");
-
-                    b.ToTable("WasteCollections");
-                });
-
-            modelBuilder.Entity("COHApp.Data.Models.WaterAvailability", b =>
-                {
-                    b.Property<int>("WaterAvailabilityId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("DateModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Fri")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Mon")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Sat")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ServiceArea")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Sun")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Thur")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Tue")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Wed")
-                        .HasColumnType("bit");
-
-                    b.HasKey("WaterAvailabilityId");
-
-                    b.ToTable("WaterAvailabilities");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -700,7 +622,7 @@ namespace BataCMS.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("COHApp.Data.Models.VendorUser", b =>
+            modelBuilder.Entity("COHApp.Data.Models.MemberUser", b =>
                 {
                     b.HasBaseType("BataCMS.Data.Models.ApplicationUser");
 
@@ -710,49 +632,20 @@ namespace BataCMS.Migrations
                     b.Property<string>("PhotoIDUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("VendorUser");
+                    b.HasDiscriminator().HasValue("MemberUser");
                 });
 
-            modelBuilder.Entity("BataCMS.Data.Models.Lease", b =>
-                {
-                    b.HasOne("BataCMS.Data.Models.RentalAsset", "RentalAsset")
-                        .WithMany()
-                        .HasForeignKey("RentalAssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BataCMS.Data.Models.RentalAsset", b =>
+            modelBuilder.Entity("BataCMS.Data.Models.HPAFacility", b =>
                 {
                     b.HasOne("COHApp.Data.Models.Category", "Category")
                         .WithMany("itemList")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
 
-            modelBuilder.Entity("BataCMS.Data.Models.Transaction", b =>
-                {
-                    b.HasOne("BataCMS.Data.Models.Lease", "Lease")
-                        .WithMany()
-                        .HasForeignKey("LeaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("COHApp.Data.Models.ActiveLease", b =>
-                {
-                    b.HasOne("BataCMS.Data.Models.Lease", "Lease")
-                        .WithMany()
-                        .HasForeignKey("LeaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BataCMS.Data.Models.RentalAsset", "RentalAsset")
-                        .WithMany()
-                        .HasForeignKey("RentalAssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("COHApp.Data.Models.MemberUser", null)
+                        .WithMany("MemberFacilities")
+                        .HasForeignKey("MemberUserId");
                 });
 
             modelBuilder.Entity("COHApp.Data.Models.DispatchedService", b =>
@@ -770,9 +663,9 @@ namespace BataCMS.Migrations
 
             modelBuilder.Entity("COHApp.Data.Models.Image", b =>
                 {
-                    b.HasOne("BataCMS.Data.Models.RentalAsset", null)
+                    b.HasOne("BataCMS.Data.Models.HPAFacility", null)
                         .WithMany("Images")
-                        .HasForeignKey("RentalAssetId");
+                        .HasForeignKey("HPAFacilityId");
                 });
 
             modelBuilder.Entity("COHApp.Data.Models.Invoice", b =>
@@ -780,12 +673,20 @@ namespace BataCMS.Migrations
                     b.HasOne("BataCMS.Data.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId");
+                });
 
-                    b.HasOne("BataCMS.Data.Models.RentalAsset", "RentalAsset")
+            modelBuilder.Entity("COHApp.Data.Models.MemberApplication", b =>
+                {
+                    b.HasOne("BataCMS.Data.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("RentalAssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("COHApp.Data.Models.MemberCertificate", b =>
+                {
+                    b.HasOne("COHApp.Data.Models.MemberUser", "MemberUser")
+                        .WithMany()
+                        .HasForeignKey("MemberUserId");
                 });
 
             modelBuilder.Entity("COHApp.Data.Models.ServiceRequest", b =>
@@ -799,13 +700,6 @@ namespace BataCMS.Migrations
                         .HasForeignKey("ServiceTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("COHApp.Data.Models.VendorApplication", b =>
-                {
-                    b.HasOne("BataCMS.Data.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

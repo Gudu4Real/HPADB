@@ -27,16 +27,16 @@ namespace COHApp.Controllers
     {
 
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IVendorApplicaitonRepository _vendorApplicationRepository;
+        private readonly IMemberApplicaitonRepository _memberApplicationRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly UserManager<VendorUser> _vendorUserManager;
+        private readonly UserManager<MemberUser> _vendorUserManager;
 
 
 
-        public VendorApplicationController(UserManager<VendorUser> vendorUserManager, IWebHostEnvironment webHostEnvironment, IVendorApplicaitonRepository vendorApplicaitonRepository, UserManager<ApplicationUser> userManager)
+        public VendorApplicationController(UserManager<MemberUser> vendorUserManager, IWebHostEnvironment webHostEnvironment, IMemberApplicaitonRepository memberApplicaitonRepository, UserManager<ApplicationUser> userManager)
         {
             _webHostEnvironment = webHostEnvironment;
-            _vendorApplicationRepository = vendorApplicaitonRepository;
+            _memberApplicationRepository = memberApplicaitonRepository;
             _userManager = userManager;
             _vendorUserManager = vendorUserManager;
         }
@@ -58,7 +58,7 @@ namespace COHApp.Controllers
                 string ResidencyProofPath = ProcessUploadedImage(model.ResidencyProof);
 
 
-                VendorApplication newVendorApplication = new VendorApplication
+                MemberApplication newVendorApplication = new MemberApplication
                 {
                     ApplicantName = model.FullName,
                     IdProofUrl = IdProofPath,
@@ -68,7 +68,7 @@ namespace COHApp.Controllers
                     Status = "Pending"                   
                 };
 
-                await _vendorApplicationRepository.AddAsync(newVendorApplication);
+                await _memberApplicationRepository.AddAsync(newVendorApplication);
                 return RedirectToAction("ApplicationComplete");
 
             }
@@ -78,12 +78,12 @@ namespace COHApp.Controllers
         [HttpGet]
         public async Task<IActionResult> EditAsync(int applicationId)
         {
-            VendorApplication application = await _vendorApplicationRepository.GetApplicationByIdAsync(applicationId);
+            MemberApplication application = await _memberApplicationRepository.GetApplicationByIdAsync(applicationId);
 
 
             EditApplicationViewModel editApplicationViewModel = new EditApplicationViewModel
             {
-                VendorApplicationId = application.VendorApplicationId,
+                VendorApplicationId = application.MemberApplicationId,
                 ExitingIdProofURL = application.IdProofUrl,
                 ExistingResidencyProofURL = application.ResidencyProofUrl,
                 FullName = application.ApplicantName,
@@ -99,7 +99,7 @@ namespace COHApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                VendorApplication application = await _vendorApplicationRepository.GetApplicationByIdAsync(model.VendorApplicationId);
+                MemberApplication application = await _memberApplicationRepository.GetApplicationByIdAsync(model.VendorApplicationId);
 
                 application.ApplicantName = model.FullName;
                 application.ApplicationDate = DateTime.Now;
@@ -132,7 +132,7 @@ namespace COHApp.Controllers
 
                 }
 
-                await _vendorApplicationRepository.UpdateApplicationAsync(application);
+                await _memberApplicationRepository.UpdateApplicationAsync(application);
                 return RedirectToAction("MyApplications", new { applicantId = application.ApplicantId });
             }
             return View();
@@ -140,7 +140,7 @@ namespace COHApp.Controllers
 
         public IActionResult MyApplications(string applicantId)
         {
-            IEnumerable<VendorApplication> applications = _vendorApplicationRepository.vendorApplications.Where(p => p.ApplicantId == applicantId);
+            IEnumerable<MemberApplication> applications = _memberApplicationRepository.vendorApplications.Where(p => p.ApplicantId == applicantId);
 
             var vm = new ListApplicationsViewModel
             {
@@ -152,25 +152,25 @@ namespace COHApp.Controllers
         [Authorize(Roles = "Employee")]
         public IActionResult ListApplications(string filter)
         {
-            IEnumerable<VendorApplication> applications = null;
+            IEnumerable<MemberApplication> applications = null;
 
             if (String.IsNullOrEmpty(filter) || filter == "all")
             {
-                applications = _vendorApplicationRepository.vendorApplications.Where(p => p.Status == "Pending");
+                applications = _memberApplicationRepository.vendorApplications.Where(p => p.Status == "Pending");
             }
             else
             {
                 if (filter == "hour")
                 {
-                    applications = _vendorApplicationRepository.vendorApplications.Where((p => p.ApplicationDate >= (DateTime.Now.AddHours(-1)) && p.Status == "Pending"));
+                    applications = _memberApplicationRepository.vendorApplications.Where((p => p.ApplicationDate >= (DateTime.Now.AddHours(-1)) && p.Status == "Pending"));
                 }
                 if (filter == "day")
                 {
-                    applications = _vendorApplicationRepository.vendorApplications.Where((p => p.ApplicationDate >= (DateTime.Now.AddDays(-1)) && p.Status == "Pending"));
+                    applications = _memberApplicationRepository.vendorApplications.Where((p => p.ApplicationDate >= (DateTime.Now.AddDays(-1)) && p.Status == "Pending"));
                 }
                 if (filter == "week")
                 {
-                    applications = _vendorApplicationRepository.vendorApplications.Where((p => p.ApplicationDate >= (DateTime.Now.AddDays(-7)) && p.Status == "Pending"));
+                    applications = _memberApplicationRepository.vendorApplications.Where((p => p.ApplicationDate >= (DateTime.Now.AddDays(-7)) && p.Status == "Pending"));
                 }
             }
             var vm = new ListApplicationsViewModel
@@ -183,7 +183,7 @@ namespace COHApp.Controllers
         public async Task<IActionResult> ViewApplicationAsync(int applicationId)
         {
 
-            VendorApplication application = await _vendorApplicationRepository.GetApplicationByIdAsync(applicationId);
+            MemberApplication application = await _memberApplicationRepository.GetApplicationByIdAsync(applicationId);
 
             //Currency currency = await _currencyRepository.GetCurrencyByNameAsync(purchase.PaymentMethods.First().PaymentMethodName);
             //PaymentMethod paymentMethod = purchase.PaymentMethods.First();
@@ -192,7 +192,7 @@ namespace COHApp.Controllers
 
             var vm = new ViewApplicationViewModel
             {
-                VendorApplicationId = application.VendorApplicationId,
+                VendorApplicationId = application.MemberApplicationId,
                 Applicant = user,
                 IdProofUrl = application.IdProofUrl,
                 ResidenceProof = application.ResidencyProofUrl,
@@ -214,7 +214,7 @@ namespace COHApp.Controllers
         [HttpPost]
         public async Task<IActionResult> ApplicationApproval(ApplicationApprovalViewModel model)
         {
-            VendorApplication application = await _vendorApplicationRepository.GetApplicationByIdAsync(model.ApplicationId);
+            MemberApplication application = await _memberApplicationRepository.GetApplicationByIdAsync(model.ApplicationId);
 
             if (ModelState.IsValid)
             {
@@ -224,7 +224,7 @@ namespace COHApp.Controllers
 
                 //Add the user to vendorUser table 
 
-                VendorUser vendorUser = new VendorUser
+                MemberUser vendorUser = new MemberUser
                 { 
                     FirstName = user.FirstName,
                     LastName = user.LastName,
@@ -247,7 +247,7 @@ namespace COHApp.Controllers
                     var vendor = await _userManager.FindByPhoneNumber(user.PhoneNumber);
                     await _userManager.AddToRoleAsync(vendor, "Vendor");
                     application.Status = "Approved";
-                    await _vendorApplicationRepository.UpdateApplicationAsync(application);
+                    await _memberApplicationRepository.UpdateApplicationAsync(application);
                     return RedirectToAction("ListApplications", "VendorApplication");
                 }
                 else
@@ -265,11 +265,11 @@ namespace COHApp.Controllers
         [HttpPost]
         public async Task<IActionResult> DeclineApplication(ViewApplicationViewModel model)
         {
-            VendorApplication application = await _vendorApplicationRepository.GetApplicationByIdAsync(model.VendorApplicationId);
+            MemberApplication application = await _memberApplicationRepository.GetApplicationByIdAsync(model.VendorApplicationId);
             application.Status = "Declined";
             application.RejectMessage = model.RejectMessage;
 
-            await _vendorApplicationRepository.UpdateApplicationAsync(application);
+            await _memberApplicationRepository.UpdateApplicationAsync(application);
             return RedirectToAction("ListApplications", "VendorApplication");
         }
 

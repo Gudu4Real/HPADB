@@ -9,7 +9,7 @@ namespace COHApp.ViewModels
 {
     public class RentalAssetListViewModel
     {
-        public IEnumerable<RentalAsset> RentalAssets { get; set; }
+        public IEnumerable<HPAFacility> RentalAssets { get; set; }
 
         public string CurrentCategory { get; set; }
     }

@@ -20,14 +20,14 @@ namespace BataCMS.Controllers
     {
 
         private readonly IServiceTypeRepository _serviceTypeRepository;
-        private readonly IRentalAssetRepository _rentalAssetRepository;
+        private readonly IHPAFacilityRepository _HPAFacilityRepository;
 
 
 
-        public HomeController( IServiceTypeRepository serviceTypeRepository, IRentalAssetRepository rentalAssetRepository)
+        public HomeController( IServiceTypeRepository serviceTypeRepository, IHPAFacilityRepository hPAFacilityRepository)
         {;
             _serviceTypeRepository = serviceTypeRepository;
-            _rentalAssetRepository = rentalAssetRepository; 
+            _HPAFacilityRepository = hPAFacilityRepository; 
         }
         public ViewResult Index()
         {

@@ -24,7 +24,7 @@ namespace BataCMS.Data.Models
         public string ServerId { get; set; }
 
 
-        public int LeaseId { get; set; }
+/*        public int MemberSubscriptionId { get; set; }*/
 
         [BindNever]
         [ScaffoldColumn(false)]
@@ -40,7 +40,7 @@ namespace BataCMS.Data.Models
         [Display(Name ="Confirm Delivery")]
         public bool isDelivered { get; set; }
 
-        public Lease Lease { get; set; }
+/*        public MemberSubscription Lease { get; set; }*/
 
 
     }

@@ -9,7 +9,7 @@ namespace BataCMS.ViewModels
 {
     public class ListApplicationsViewModel
     {
-        public IEnumerable<VendorApplication> Applications { get; set; }
+        public IEnumerable<MemberApplication> Applications { get; set; }
 
     }
 }

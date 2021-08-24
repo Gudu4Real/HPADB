@@ -20,13 +20,13 @@ namespace COHApp.Controllers
     {
 
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IVendorApplicaitonRepository _vendorApplicationRepository;
+        private readonly IMemberApplicaitonRepository _vendorApplicationRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IServiceTypeRepository _serviceTypeRepository;
         private readonly IServiceRequestRepository _oDServiceRequestRepository;
         private readonly IDispatchedServiceRepository _dispatchedServiceRepository;
 
-        public ServiceRequestController(IDispatchedServiceRepository dispatchedServiceRepository, IServiceRequestRepository oDServiceRequestRepository, IServiceTypeRepository serviceTypeRepository, IWebHostEnvironment webHostEnvironment, IVendorApplicaitonRepository vendorApplicaitonRepository, UserManager<ApplicationUser> userManager)
+        public ServiceRequestController(IDispatchedServiceRepository dispatchedServiceRepository, IServiceRequestRepository oDServiceRequestRepository, IServiceTypeRepository serviceTypeRepository, IWebHostEnvironment webHostEnvironment, IMemberApplicaitonRepository vendorApplicaitonRepository, UserManager<ApplicationUser> userManager)
         {
             _webHostEnvironment = webHostEnvironment;
             _vendorApplicationRepository = vendorApplicaitonRepository;

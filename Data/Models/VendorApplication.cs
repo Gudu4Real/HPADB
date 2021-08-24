@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace COHApp.Data.Models
 {
-    public class VendorApplication
+    public class MemberApplication
     {
-        public int VendorApplicationId { get; set; }
+        public int MemberApplicationId { get; set; }
 
         public string ApplicantName { get; set; }
 

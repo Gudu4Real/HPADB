@@ -17,6 +17,6 @@ namespace COHApp.ViewModels
 
         public string Description { get; set; }
 
-        public IEnumerable<RentalAsset> ItemList { get; set; }
+        public IEnumerable<HPAFacility> ItemList { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace BataCMS.Data.Repositories
             _appDbContext = appDbContext;
         }
 
-        public IEnumerable<Transaction> Transactions => _appDbContext.Transactions.Include(p => p.Lease).OrderByDescending(p => p.TransactionDate);
+        public IEnumerable<Transaction> Transactions => _appDbContext.Transactions/*.Include(p => p.Lease)*/.OrderByDescending(p => p.TransactionDate);
 
         public async Task<int> CreateTransactionAsync(Transaction transaction)
         {
@@ -38,7 +38,7 @@ namespace BataCMS.Data.Repositories
 
         public async Task<Transaction> GetPurchaseByIdAsync(int purchaseId)
         {
-            return await _appDbContext.Transactions.Include(p => p.Lease).FirstOrDefaultAsync(p => p.TransactionId == purchaseId);
+            return await _appDbContext.Transactions/*.Include(p => p.Lease)*/.FirstOrDefaultAsync(p => p.TransactionId == purchaseId);
         }
 
         public Task UpdatePurchaseAsync(Transaction purchase)

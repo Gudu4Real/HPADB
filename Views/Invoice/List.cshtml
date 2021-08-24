@@ -28,10 +28,10 @@
                         {
                             <tr>
                                 <td class="text-center">@line.InvoiceId</td>
-                                <td class="text-left">@line.RentalAssetId</td>
-                                <td class="text-right">
+                                @*<td class="text-left">@line.RentalAssetId</td>*@
+@*                                <td class="text-right">
                                     @line.LeaseTo)
-                                </td>
+                                </td>*@
                                 <td class="text-center"><a class="btn btn-primary" asp-controller="Invoice" asp-action="View" asp-route-id="@line.InvoiceId">Invoice Details</a></td>
                             </tr>
                         }

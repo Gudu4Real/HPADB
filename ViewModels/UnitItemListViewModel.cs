@@ -9,7 +9,7 @@ namespace BataCMS.Data.ViewModels
 {
     public class UnitItemListViewModel
     {
-        public IEnumerable<RentalAsset> UnitItems { get; set; }
+        public IEnumerable<HPAFacility> UnitItems { get; set; }
 
         public string CurrentCategory { get; set; }
     }

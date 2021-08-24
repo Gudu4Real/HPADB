@@ -11,59 +11,59 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BataCMS.Data.Repositories
 {
-    public class RentalAssetRepository : IRentalAssetRepository
+    public class HPAFacilityRepository : IHPAFacilityRepository
 
     {
         private readonly AppDbContext _appDbContext;
 
-        public RentalAssetRepository(AppDbContext appDbContext)
+        public HPAFacilityRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
         }
 
-        public IEnumerable<RentalAsset> rentalAssets => _appDbContext.RentalAssets.Include(c => c.Category);
+        public IEnumerable<HPAFacility> HPAFacilities => _appDbContext.HPAFacilities.Include(c => c.Category);
 
-        public async Task<RentalAsset> GetItemByIdAsync(int unitItemId) => await _appDbContext.RentalAssets.Include(c => c.Images).FirstOrDefaultAsync(p => p.RentalAssetId == unitItemId);
+        public async Task<HPAFacility> GetItemByIdAsync(int unitItemId) => await _appDbContext.HPAFacilities/*.Include(c => c.Images)*/.FirstOrDefaultAsync(p => p.HPAFacilityId == unitItemId);
 
 
         public async Task<int> DeleteItem(int itemId)
         {
-            var unitItem = await _appDbContext.RentalAssets.FindAsync(itemId);
+            var unitItem = await _appDbContext.HPAFacilities.FindAsync(itemId);
 
 
-            _appDbContext.RentalAssets.Remove(unitItem);
+            _appDbContext.HPAFacilities.Remove(unitItem);
             var result = await _appDbContext.SaveChangesAsync();
             return result;
         }
 
-        public async Task<RentalAsset> AddAsync(RentalAsset item)
+        public async Task<HPAFacility> AddAsync(HPAFacility item)
         {
-            await _appDbContext.RentalAssets.AddAsync(item);
+            await _appDbContext.HPAFacilities.AddAsync(item);
             await _appDbContext.SaveChangesAsync();
             return item;
         }
 
-        public async Task EditItemAsync(RentalAsset updatedItem)
+        public async Task EditItemAsync(HPAFacility updatedItem)
         {
-            _appDbContext.RentalAssets.Update(updatedItem);
+            _appDbContext.HPAFacilities.Update(updatedItem);
             await _appDbContext.SaveChangesAsync();
         }
 
         public async Task BookAsset(DateTime bookedTill, int assetId)
         {
-            RentalAsset rentalAsset = await _appDbContext.RentalAssets.FindAsync(assetId);
+            HPAFacility rentalAsset = await _appDbContext.HPAFacilities.FindAsync(assetId);
             rentalAsset.BookTillDate = bookedTill;
             rentalAsset.IsAvailable = false;
-            _appDbContext.RentalAssets.Update(rentalAsset);
+            _appDbContext.HPAFacilities.Update(rentalAsset);
             await _appDbContext.SaveChangesAsync(); 
         }
 
         public async Task EndBooking(int assetId)
         {
-            RentalAsset rentalAsset = await _appDbContext.RentalAssets.FindAsync(assetId);
-            rentalAsset.BookTillDate = null;
-            rentalAsset.IsAvailable = true;
-            _appDbContext.RentalAssets.Update(rentalAsset);
+            HPAFacility hPAFacility = await _appDbContext.HPAFacilities.FindAsync(assetId);
+            hPAFacility.BookTillDate = null;
+            hPAFacility.IsAvailable = true;
+            _appDbContext.HPAFacilities.Update(hPAFacility);
             await _appDbContext.SaveChangesAsync();
 
         }

@@ -13,12 +13,12 @@ namespace COHApp.Controllers
     public class InvoiceController : Controller
     {
         private readonly IInvoiceRepository _invoiceRepository;
-        private readonly IRentalAssetRepository _rentalAssetRepository;
+        private readonly IHPAFacilityRepository _HPAFacilityRepository;
 
-        public InvoiceController(IInvoiceRepository invoiceRepository, IRentalAssetRepository rentalAssetRepository)
+        public InvoiceController(IInvoiceRepository invoiceRepository, IHPAFacilityRepository hPAFacilityRepository)
         {
             _invoiceRepository = invoiceRepository;
-            _rentalAssetRepository = rentalAssetRepository;
+            _HPAFacilityRepository = hPAFacilityRepository;
         }
 
         public IActionResult Index()
@@ -53,17 +53,11 @@ namespace COHApp.Controllers
 
             Invoice invoice =  _invoiceRepository.GetInvoice(Id);
 
-            RentalAsset rentalAsset = await _rentalAssetRepository.GetItemByIdAsync(invoice.RentalAssetId);
 
             var vm = new InvoiceDetailViewModel
             {
                 InvoiceId = invoice.InvoiceId,
-                RentalAssetLocation = rentalAsset.Location,
-                RentalAssetName = rentalAsset.Name,
-                RentalAssetPrice = rentalAsset.Price,
-                LeaseFrom = invoice.LeaseFrom,
-                LeaseTo = invoice.LeaseTo,
-                AmountPaid = invoice.AmountPaid
+                AmountPaid = invoice.AmountDue
             };
 
             return View(vm);

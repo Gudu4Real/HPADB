@@ -16,7 +16,7 @@ namespace COHApp.Data
             return await um?.Users?.SingleOrDefaultAsync(x => x.PhoneNumber == number);
         }
 
-        public static async Task<VendorUser> FindByPhoneNumber(this UserManager<VendorUser> um, string number)
+        public static async Task<MemberUser> FindByPhoneNumber(this UserManager<MemberUser> um, string number)
         {
             return await um?.Users?.SingleOrDefaultAsync(x => x.PhoneNumber == number);
         }

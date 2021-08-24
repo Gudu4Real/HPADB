@@ -46,31 +46,22 @@ namespace BataCMS
                 opt.Password.RequireNonAlphanumeric = false;
             
             }).AddEntityFrameworkStores<AppDbContext>();
-            services.AddIdentityCore<VendorUser>().AddEntityFrameworkStores<AppDbContext>();
+            services.AddIdentityCore<MemberUser>().AddEntityFrameworkStores<AppDbContext>();
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(_configurationRoot.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
-
-
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IPaymentMethodRepository, PaymentMethodRepository>();
             services.AddTransient<IPurchasePayementMethodRepository, PurchasePaymentMethodRepository>();;
-            services.AddTransient<IVendorApplicaitonRepository, VendorApplicationRepository>();
-            services.AddTransient<IRentalAssetRepository, RentalAssetRepository>();
+            services.AddTransient<IMemberApplicaitonRepository, MemberApplicationRepository>();
+            services.AddTransient<IHPAFacilityRepository, HPAFacilityRepository>();
             services.AddTransient<ITransactionRepository, TransactionRepository>();
-            services.AddTransient<ILeaseRepository, LeaseRepository>();
+            services.AddTransient<IMemberSubscriptionRepository, MemberSubscriptionRepository>();
             services.AddTransient<IImageRepository, ImageRepository>();
-            services.AddTransient<IActiveLeaseRepository, ActiveLeaseRepository>();
+            services.AddTransient<IMemberCertificateRepository, MemberCertificateRepository>();
             services.AddTransient<IInvoiceRepository, InvoiceRepository>();
             services.AddTransient<IServiceTypeRepository, ServiceTypeRepository>();
             services.AddTransient<IServiceRequestRepository, ServiceRequestRepository>();
             services.AddTransient<IDispatchedServiceRepository, DispatchedServiceRepository>();
             services.AddTransient<IMessagesRepository, MessageRepository>();
-            services.AddTransient<IWasteCollectionsRepository, WasteCollectionsRepository>();
-            services.AddTransient<IWaterAvailabilityRepository, WaterAvailabilityRepository>();
-
-
-
-
-
 
 
             services.AddSignalR();

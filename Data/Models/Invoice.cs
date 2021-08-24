@@ -10,17 +10,17 @@ namespace COHApp.Data.Models
     {
         public int InvoiceId { get; set; }
 
-        public int RentalAssetId { get; set; }
+        public DateTime Date { get; set; }
+
+        public decimal AmountDue { get; set; }
 
         public string ApplicationId { get; set; }
+
+        /*public string LeaseId {get; set;}*/
 
         public DateTime LeaseFrom { get; set; }
 
         public DateTime LeaseTo { get; set; }
-
-        public decimal AmountPaid { get; set; }
-
-        public virtual RentalAsset RentalAsset { get; set; }
 
         public virtual ApplicationUser ApplicationUser { get; set; }
     }

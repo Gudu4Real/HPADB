@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RentalAsset = BataCMS.Data.Models.RentalAsset;
+using RentalAsset = BataCMS.Data.Models.HPAFacility;
 using Category = COHApp.Data.Models.Category;
 
 namespace BataCMS.Data
@@ -26,7 +26,7 @@ namespace BataCMS.Data
                 context.PaymentMethods.AddRange(PaymentMethods.Select(c => c.Value));
             }
 
-            if (!context.RentalAssets.Any())
+            if (!context.HPAFacilities.Any())
             {
                 context.AddRange
                 (                   

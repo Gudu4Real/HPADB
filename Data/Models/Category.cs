@@ -16,6 +16,6 @@ namespace COHApp.Data.Models
 
         public string Description { get; set; }
 
-        public List<RentalAsset> itemList { get; set; }
+        public List<HPAFacility> itemList { get; set; }
     }
 }
