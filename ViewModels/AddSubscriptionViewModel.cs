@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace COHApp.ViewModels
 {
-    public class AddLeaseViewModel
+    public class AddSubscriptionViewModel
     {
-        public string VendorPhone { get; set; }
+        public string MemberPhone { get; set; }
 
-        public int RentalAssetId { get; set; }
+        public int HPAFacilityId { get; set; }
 
         [Required]
         [DataType(DataType.Date)]

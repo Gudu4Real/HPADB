@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace COHApp.ViewModels
 {
-    public class EditRentalAssetViewModel : CreateRentalAssetViewModel
+    public class EditFacilityViewModel : CreateFacilityViewModel
     {
-        public int RentalAssetId { get; set; }
+        public int FacilityId { get; set; }
 
         public string ExistingImagePath {get; set;}
 

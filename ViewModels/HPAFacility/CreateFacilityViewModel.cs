@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 
 namespace COHApp.ViewModels
 {
-    public class CreateRentalAssetViewModel
+    public class CreateFacilityViewModel
     {
         public string Name { get; set; }
         public decimal Price { get; set; }
         public bool IsAvailable { get; set; }
         public string Location { get; set; }
         public string Description { get; set; }
-
-
         [Required]
         public string Category { get; set; }
 

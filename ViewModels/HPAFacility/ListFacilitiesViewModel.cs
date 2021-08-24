@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace COHApp.ViewModels
 {
-    public class RentalAssetListViewModel
+    public class ListFacilitiesViewModel
     {
-        public IEnumerable<HPAFacility> RentalAssets { get; set; }
+        public IEnumerable<HPAFacility> Facilities { get; set; }
 
         public string CurrentCategory { get; set; }
     }

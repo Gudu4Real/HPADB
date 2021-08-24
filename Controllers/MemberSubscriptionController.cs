@@ -13,15 +13,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace COHApp.Controllers
 {
-    public class LeaseController : Controller
+    public class MemberSubscriptionController : Controller
     {
-        private readonly IMemberSubscriptionRepository _leaseRepository;
+        private readonly IMemberSubscriptionRepository _memberSubscriptionRepository;
         private readonly UserManager<MemberUser> _vendorUserManager;
 
 
-        public LeaseController(IMemberSubscriptionRepository leaseRepository, UserManager<MemberUser> userManager)
+        public MemberSubscriptionController(IMemberSubscriptionRepository memberSubscriptionRepository, UserManager<MemberUser> userManager)
         {
-            _leaseRepository = leaseRepository;
+            _memberSubscriptionRepository = memberSubscriptionRepository;
             _vendorUserManager = userManager;
         }
 
@@ -43,29 +43,29 @@ namespace COHApp.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CashBooking(AddLeaseViewModel model)
+        public async Task<IActionResult> CashBooking(AddSubscriptionViewModel model)
         {
 
-            MemberUser vendorUser = await _vendorUserManager.FindByPhoneNumber(ProcessPhoneNumber(model.VendorPhone));
+            MemberUser vendorUser = await _vendorUserManager.FindByPhoneNumber(ProcessPhoneNumber(model.MemberPhone));
 
             // add the to the lease 
             if (ModelState.IsValid)
             {
                 if (vendorUser == null)
                 {
-                    ModelState.AddModelError("", "The phone number "+ model.VendorPhone + " is not a registered Vendor");
+                    ModelState.AddModelError("", "The phone number "+ model.MemberPhone + " is not a registered Vendor");
                     return View();
                 }
 
                 MemberSubscription subscription = new MemberSubscription
                 {
                     UserId = vendorUser.Id,
-                    /*RentalAssetId = model.RentalAssetId,*/
+                    HPAFacilityId= model.HPAFacilityId,
                     From = model.leaseFrom,
                     To = model.leaseTo
                 };
-                var success =  await _leaseRepository.AddAsync(subscription);
-                return RedirectToAction("Checkout", "Transaction", new {leaseId = success.MemberSubscriptionId });
+                var success =  await _memberSubscriptionRepository.AddAsync(subscription);
+                return RedirectToAction("Checkout", "Transaction", new {subscriptionId = success.MemberSubscriptionId });
             }
 
             return View();
@@ -73,17 +73,17 @@ namespace COHApp.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> MakeBooking(MemberSubscription lease)
+        public async Task<IActionResult> MakeBooking(MemberSubscription subscription)
         {
             // add the to the lease 
             if (ModelState.IsValid)
             {
-                var success = await _leaseRepository.AddAsync(lease);
+                var success = await _memberSubscriptionRepository.AddAsync(subscription);
 
-                return RedirectToAction("Checkout", "Transaction", new { leaseId = success.MemberSubscriptionId });
+                return RedirectToAction("Checkout", "Transaction", new { subscriptionId = success.MemberSubscriptionId });
             }
 
-            return View(lease);
+            return View(subscription);
         }
 
         private string ProcessPhoneNumber(string phoneNumber)

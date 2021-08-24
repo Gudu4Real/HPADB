@@ -23,22 +23,22 @@ using COHApp.Data;
 
 namespace COHApp.Controllers
 {
-    public class VendorApplicationController :  Controller
+    public class MemberApplicationController :  Controller
     {
 
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMemberApplicaitonRepository _memberApplicationRepository;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly UserManager<MemberUser> _vendorUserManager;
+        private readonly UserManager<MemberUser> _memberUserManager;
 
 
 
-        public VendorApplicationController(UserManager<MemberUser> vendorUserManager, IWebHostEnvironment webHostEnvironment, IMemberApplicaitonRepository memberApplicaitonRepository, UserManager<ApplicationUser> userManager)
+        public MemberApplicationController(UserManager<MemberUser> memberUserManager, IWebHostEnvironment webHostEnvironment, IMemberApplicaitonRepository memberApplicaitonRepository, UserManager<ApplicationUser> userManager)
         {
             _webHostEnvironment = webHostEnvironment;
             _memberApplicationRepository = memberApplicaitonRepository;
             _userManager = userManager;
-            _vendorUserManager = vendorUserManager;
+            _memberUserManager = memberUserManager;
         }
 
         [HttpGet]
@@ -240,7 +240,7 @@ namespace COHApp.Controllers
                 await _userManager.DeleteAsync(user); 
 
                 //add new vendorUser
-                IdentityResult result =  await _vendorUserManager.CreateAsync(vendorUser);
+                IdentityResult result =  await _memberUserManager.CreateAsync(vendorUser);
 
                 if (result.Succeeded)
                 {

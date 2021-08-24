@@ -1,5 +1,5 @@
 ﻿@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> signInManager
-@model COHApp.ViewModels.RentalAssetListViewModel
+@model COHApp.ViewModels.ListFacilitiesViewModel
 
 <div id="main">
     <div id="wrapper">
@@ -9,10 +9,10 @@
 
             <a class="button" asp-controller="RentalAsset" asp-action="List">Available Stalls</a>
 
-            @if (Model.RentalAssets.Any())
+            @if (Model.Facilities.Any())
             {
                 <div class="row">
-                    @foreach (var item in Model.RentalAssets)
+                    @foreach (var item in Model.Facilities)
                     {
 
                         @await Html.PartialAsync("RentalAssetSummary", item);

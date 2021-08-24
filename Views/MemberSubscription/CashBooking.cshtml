@@ -1,5 +1,5 @@
 ﻿@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
-@model COHApp.ViewModels.AddLeaseViewModel
+@model COHApp.ViewModels.AddSubscriptionViewModel
 
 
 
@@ -9,14 +9,14 @@
         <div class="inner">
             <h3 class="text-center">Select Rental Duration</h3>
             <form asp-action="CashBooking" method="post" class="form-horizontal" role="form">
-                <input asp-for="RentalAssetId" class="form-control" type="hidden" value="@ViewBag.RentalAssetId">
+                <input asp-for="HPAFacilityId" class="form-control" type="hidden" value="@ViewBag.HPAFacilty">
 
 
                 <div class="field">
-                    <label asp-for="VendorPhone" class="col-sm-2 col-form-label"></label>
+                    <label asp-for="MemberPhone" class="col-sm-2 col-form-label"></label>
                     <div class="col-sm-10">
-                        <input asp-for="VendorPhone" class="form-control" placeholder="Enter Vendor PhoneNumber" />
-                        <span asp-validation-for="VendorPhone" class="text-danger"></span>
+                        <input asp-for="MemberPhone" class="form-control" placeholder="Enter Vendor PhoneNumber" />
+                        <span asp-validation-for="MemberPhone" class="text-danger"></span>
                     </div>
                 </div>
 

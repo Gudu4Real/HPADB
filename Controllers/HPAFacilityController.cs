@@ -18,14 +18,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace COHApp.Controllers
 {
-    public class RentalAssetController : Controller
+    public class HPAFacilityController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHPAFacilityRepository _HPAFacilityRepository;
         private readonly IMemberCertificateRepository _activeLeaseRepository;
         private readonly IImageRepository _imageRepository;
-        private readonly IMemberSubscriptionRepository _leaseRepository;
+        private readonly IMemberSubscriptionRepository _memberSubscriptionRepository;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -33,14 +33,14 @@ namespace COHApp.Controllers
 
 
 
-        public RentalAssetController(IInvoiceRepository invoiceRepository, UserManager<ApplicationUser> userManager, ICategoryRepository categoryRepository, IWebHostEnvironment webHostEnvironment, IHPAFacilityRepository hPAFacilityRepository, IImageRepository imageRepository, IMemberCertificateRepository activeLeaseRepository, IMemberSubscriptionRepository leaseRepository)
+        public HPAFacilityController(IInvoiceRepository invoiceRepository, UserManager<ApplicationUser> userManager, ICategoryRepository categoryRepository, IWebHostEnvironment webHostEnvironment, IHPAFacilityRepository hPAFacilityRepository, IImageRepository imageRepository, IMemberCertificateRepository activeLeaseRepository, IMemberSubscriptionRepository memberSubscriptionRepository)
         {
             _categoryRepository = categoryRepository;
             _webHostEnvironment = webHostEnvironment;
             _HPAFacilityRepository = hPAFacilityRepository;
             _imageRepository = imageRepository;
             _activeLeaseRepository = activeLeaseRepository;
-            _leaseRepository = leaseRepository;
+            _memberSubscriptionRepository = memberSubscriptionRepository;
             _userManager = userManager;
             _invoiceRepository = invoiceRepository;
 
@@ -50,28 +50,28 @@ namespace COHApp.Controllers
         public ViewResult List(string category, string searchString)
         {
             string _category = category;
-            IEnumerable<HPAFacility> rentalasset;
+            IEnumerable<HPAFacility> facilities;
 
             string currentCategory = string.Empty;
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                rentalasset = _HPAFacilityRepository.HPAFacilities.Where(p => p.Name.Contains(searchString));
+                facilities = _HPAFacilityRepository.HPAFacilities.Where(p => p.Name.Contains(searchString));
             }
             else if (!string.IsNullOrEmpty(category))
             {
-                rentalasset = _HPAFacilityRepository.HPAFacilities.Where(p => p.Category.CategoryName.Equals(_category));
+                facilities = _HPAFacilityRepository.HPAFacilities.Where(p => p.Category.CategoryName.Equals(_category));
                 currentCategory = _category;
             }
             else
             {
-                rentalasset = _HPAFacilityRepository.HPAFacilities.OrderBy(p => p.HPAFacilityId);
-                currentCategory = "All Stalls";
+                facilities = _HPAFacilityRepository.HPAFacilities.OrderBy(p => p.HPAFacilityId);
+                currentCategory = "All Facilities";
             }
 
-            var vm = new RentalAssetListViewModel
+            var vm = new ListFacilitiesViewModel
             {
-                RentalAssets = rentalasset,
+                Facilities = facilities,
                 CurrentCategory = currentCategory
             };
 
@@ -81,28 +81,28 @@ namespace COHApp.Controllers
         public ViewResult BookedList(string category, string searchString)
         {
             string _category = category;
-            IEnumerable<HPAFacility> rentalasset;
+            IEnumerable<HPAFacility> facilities;
 
             string currentCategory = string.Empty;
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                rentalasset = _HPAFacilityRepository.HPAFacilities.Where(p => p.Name.Contains(searchString)).Where(p => p.IsAvailable == false);
+                facilities = _HPAFacilityRepository.HPAFacilities.Where(p => p.Name.Contains(searchString)).Where(p => p.IsAvailable == false);
             }
             else if (!string.IsNullOrEmpty(category))
             {
-                rentalasset = _HPAFacilityRepository.HPAFacilities.Where(p => p.Category.CategoryName.Equals(_category)).Where(p => p.IsAvailable == false);
+                facilities = _HPAFacilityRepository.HPAFacilities.Where(p => p.Category.CategoryName.Equals(_category)).Where(p => p.IsAvailable == false);
                 currentCategory = _category;
             }
             else
             {
-                rentalasset = _HPAFacilityRepository.HPAFacilities.Where(p => p.IsAvailable == false).OrderBy(p => p.HPAFacilityId);
-                currentCategory = "All Stalls";
+                facilities = _HPAFacilityRepository.HPAFacilities.Where(p => p.IsAvailable == false).OrderBy(p => p.HPAFacilityId);
+                currentCategory = "All Facilities";
             }
 
-            var vm = new RentalAssetListViewModel
+            var vm = new ListFacilitiesViewModel
             {
-                RentalAssets = rentalasset,
+                Facilities = facilities,
                 CurrentCategory = currentCategory
             };
 
@@ -117,7 +117,7 @@ namespace COHApp.Controllers
 
             /*ActiveLease activeLease = _activeLeaseRepository.GetActiveLeaseByAssetId(rentalAsset.HPAFacilityId);*/
 
-            MemberSubscription lease = await _leaseRepository.GetById(id/*activeLease.LeaseId*/);
+            MemberSubscription lease = await _memberSubscriptionRepository.GetById(id/*activeLease.LeaseId*/);
 
             ApplicationUser user = await _userManager.FindByIdAsync(lease.UserId);
 
@@ -159,10 +159,10 @@ namespace COHApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ViewAsync(int itemId)
+        public async Task<IActionResult> ViewAsync(int facilityId)
         {
-            HPAFacility unitItem = await _HPAFacilityRepository.GetItemByIdAsync(itemId);
-            return View(unitItem);
+            HPAFacility facility = await _HPAFacilityRepository.GetItemByIdAsync(facilityId);
+            return View(facility);
         }
 
         [HttpGet]
@@ -177,7 +177,7 @@ namespace COHApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(CreateRentalAssetViewModel model)
+        public async Task<IActionResult> CreateAsync(CreateFacilityViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -205,7 +205,7 @@ namespace COHApp.Controllers
 
                 var category = _categoryRepository.Categories.FirstOrDefault(p => p.CategoryName == model.Category);
 
-                HPAFacility newRentalAsset = new HPAFacility
+                HPAFacility newFacility = new HPAFacility
                 {
                     Name = model.Name,
                     Price = model.Price,
@@ -214,11 +214,11 @@ namespace COHApp.Controllers
                     CategoryId = category.CategoryId,
                     ImageUrl = mainPhotoPath,
                     Description = model.Description,
-                    /*Images = assetImages*/
+                    Images = assetImages
                 };
 
-                await _HPAFacilityRepository.AddAsync(newRentalAsset);
-                return RedirectToAction("List", new { id = newRentalAsset.HPAFacilityId });
+                await _HPAFacilityRepository.AddAsync(newFacility);
+                return RedirectToAction("List", new { id = newFacility.HPAFacilityId });
 
             }
             return View();
@@ -233,32 +233,32 @@ namespace COHApp.Controllers
                 Text = x.CategoryName
             }).ToList();
 
-            HPAFacility rentalAsset = await _HPAFacilityRepository.GetItemByIdAsync(id);
-            Category category = _categoryRepository.Categories.FirstOrDefault(p => p.CategoryId == rentalAsset.CategoryId);
+            HPAFacility facility = await _HPAFacilityRepository.GetItemByIdAsync(id);
+            Category category = _categoryRepository.Categories.FirstOrDefault(p => p.CategoryId == facility.CategoryId);
 
-            EditRentalAssetViewModel editRentalAssetViewModel = new EditRentalAssetViewModel
+            EditFacilityViewModel viewModel = new EditFacilityViewModel
             {
-                RentalAssetId = rentalAsset.HPAFacilityId,
-                Name = rentalAsset.Name,
-                Price = rentalAsset.Price,
-                Location = rentalAsset.Location,
-                IsAvailable = rentalAsset.IsAvailable,
+                FacilityId = facility.HPAFacilityId,
+                Name = facility.Name,
+                Price = facility.Price,
+                Location = facility.Location,
+                IsAvailable = facility.IsAvailable,
                 Category = category.CategoryName,
-                ExistingImagePath = rentalAsset.ImageUrl,
-                Description = rentalAsset.Description,
-                /*ExistingImages = rentalAsset.Images*/
+                ExistingImagePath = facility.ImageUrl,
+                Description = facility.Description,
+                ExistingImages = facility.Images
             };
-            return View(editRentalAssetViewModel);
+            return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditAsync(EditRentalAssetViewModel model)
+        public async Task<IActionResult> EditAsync(EditFacilityViewModel model)
         {
             if (ModelState.IsValid)
             {
                 List<Image> assetImages = new List<Image>();
                 List<Image> deleteImages = new List<Image>();
-                HPAFacility rentalAsset = await _HPAFacilityRepository.GetItemByIdAsync(model.RentalAssetId);
+                HPAFacility rentalAsset = await _HPAFacilityRepository.GetItemByIdAsync(model.FacilityId);
                 Category category = _categoryRepository.Categories.FirstOrDefault(p => p.CategoryName == model.Category);
 
 
