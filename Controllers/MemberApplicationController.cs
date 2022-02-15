@@ -30,15 +30,17 @@ namespace COHApp.Controllers
         private readonly IMemberApplicaitonRepository _memberApplicationRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly UserManager<MemberUser> _memberUserManager;
+        private readonly IHPAFacilityRepository _HPAFacilityRepository;
 
 
 
-        public MemberApplicationController(UserManager<MemberUser> memberUserManager, IWebHostEnvironment webHostEnvironment, IMemberApplicaitonRepository memberApplicaitonRepository, UserManager<ApplicationUser> userManager)
+        public MemberApplicationController(IHPAFacilityRepository hPAFacilityRepository, UserManager<MemberUser> memberUserManager, IWebHostEnvironment webHostEnvironment, IMemberApplicaitonRepository memberApplicaitonRepository, UserManager<ApplicationUser> userManager)
         {
             _webHostEnvironment = webHostEnvironment;
             _memberApplicationRepository = memberApplicaitonRepository;
             _userManager = userManager;
             _memberUserManager = memberUserManager;
+            _HPAFacilityRepository = hPAFacilityRepository;
         }
 
         [HttpGet]
@@ -149,7 +151,7 @@ namespace COHApp.Controllers
             return View(vm);
         }
 
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         public IActionResult ListApplications(string filter)
         {
             IEnumerable<MemberApplication> applications = null;
@@ -197,7 +199,8 @@ namespace COHApp.Controllers
                 IdProofUrl = application.IdProofUrl,
                 ResidenceProof = application.ResidencyProofUrl,
                 ApplicationDate = application.ApplicationDate,
-                RejectMessage = application.RejectMessage
+                RejectMessage = application.RejectMessage,
+                CompanyName = application.ApplicantName
             };
 
             return View(vm);
@@ -214,6 +217,7 @@ namespace COHApp.Controllers
         [HttpPost]
         public async Task<IActionResult> ApplicationApproval(ApplicationApprovalViewModel model)
         {
+            List<HPAFacility> companies = new List<HPAFacility>();
             MemberApplication application = await _memberApplicationRepository.GetApplicationByIdAsync(model.ApplicationId);
 
             if (ModelState.IsValid)
@@ -221,7 +225,14 @@ namespace COHApp.Controllers
                 //Add the user to the VendorRole
                 ApplicationUser user = await _userManager.FindByIdAsync(application.ApplicantId);
 
+/*                //get company name from application 
 
+                string companyName = application.ApplicantName;
+
+                //find the company from the Facilities 
+                HPAFacility company = _HPAFacilityRepository.HPAFacilities.FirstOrDefault(p => p.Name.IsNormalized() == companyName.IsNormalized());
+                companies.Add(company);
+*/
                 //Add the user to vendorUser table 
 
                 MemberUser vendorUser = new MemberUser
@@ -234,6 +245,7 @@ namespace COHApp.Controllers
                     PasswordHash = user.PasswordHash,
                     CardNumber = model.CardNumber,
                     PhotoIDUrl = application.IdProofUrl
+/*                    Companies = companies*/
                 };
 
                 //remove existing user 
@@ -245,10 +257,10 @@ namespace COHApp.Controllers
                 if (result.Succeeded)
                 {
                     var vendor = await _userManager.FindByPhoneNumber(user.PhoneNumber);
-                    await _userManager.AddToRoleAsync(vendor, "Vendor");
+                    await _userManager.AddToRoleAsync(vendor, "Member");
                     application.Status = "Approved";
                     await _memberApplicationRepository.UpdateApplicationAsync(application);
-                    return RedirectToAction("ListApplications", "VendorApplication");
+                    return RedirectToAction("ListApplications", "MemberApplication");
                 }
                 else
                 {

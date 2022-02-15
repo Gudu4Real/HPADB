@@ -11,6 +11,7 @@ namespace BataCMS.ViewModels
     public class CreateVendorApplicationViewModel
     {
         [Required]
+        [Display(Name = "Company Name")]
         public string FullName { get; set; }
 
         public IFormFile IdProof { get; set; }

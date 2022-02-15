@@ -1,36 +1,117 @@
-﻿@model IEnumerable<COHApp.Data.Models.Category>
+﻿@model HPADB.ViewModels.ListCategoriesViewModel
 
 
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Manage Categories</title>
+    <title>Sector Management</title>
+@*    <script type="text/javascript">
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        var dataArray = new Array();
+        dataArray.push(["Facility", "Price", { role: "style" }]);
+
+        @foreach (var item in Model.FacilityPricing)
+        {
+            @:dataArray.push(["@item.Key", @item.Value, "yellow"]);
+        }
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable(dataArray);
+            var view = new google.visualization.DataView(data);
+            view.setColumns([0, 1,
+                {
+                    calc: "stringify",
+                    sourceColumn: 1,
+                    type: "string",
+                    role: "annotation"
+                },
+                2]);
+
+            var pieChartData = google.visualization.arrayToDataTable([
+                ['Users', 'Verification'],
+                ['Available', @Model.AvailableFacilities],
+                ['Unavailable', (@Model.Sectors.Count() - @Model.AvailableFacilities)]
+            ]);
+
+            var pieChartOptions = {
+                legend: 'none',
+                pieSliceText: 'label',
+                title: 'Facility Availabilty',
+                pieStartAngle: 100,
+            };
+
+
+
+            var options = {
+                title: "Facility rental prices, in $US",
+                width: 800,
+                height: 500,
+                bar: { groupWidth: "95%" },
+                legend: { position: "none" },
+            };
+
+            var piechart = new google.visualization.PieChart(document.getElementById('piechart'));
+            piechart.draw(pieChartData, pieChartOptions);
+
+            var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+            chart.draw(view, options);
+        }
+    </script>*@
 </head>
+
+
+
+
 <body>
     <div id="main">
         <div id="container">
             <div class="inner">
-                <h1>Manage Categories</h1>
 
-                @if (Model.Any())
+                <header class="major">
+                    <h1>Sector Management</h1>
+                </header>
+
+                <!-- Display Data -->
+                <div class="row gtr-200">
+                    <div class="col-6 col-12-medium">
+
+                        <h2>Total Sectors</h2>
+                        <h3>@Model.Sectors.Count()</h3>
+
+                        @*                        <h3>Price Distribution</h3>
+                <div class="row">
+
+                    <div class="col-6 col-12-small">
+                        <div id="barchart_values" style="width: 900px; height: 500px;"></div>
+                    </div>
+
+                    <div class="col-6 col-12-small">
+                        <div id="piechart" style="width: 500px; height: 500px;"></div>
+                    </div>
+                </div>*@
+                    </div>
+                </div>
+            </div>
+            <div class="inner">
+                <a asp-action="AddCategory" asp-controller="Admin" class="button special">Add a new Sector</a>
+
+                @if (Model.Sectors.Any())
                 {
-                    <a asp-action="AddCategory" asp-controller="Admin" class="btn btn-primary">Add a new category</a>
 
-
-                    foreach (var item in Model)
+                    foreach (var item in Model.Sectors)
                     {
-                        <!-- Break -->
-
                         <div class="table-wrapper">
                             <table>
                                 <tbody>
                                     <tr>
-                                        <th>Category Id: </th>
+                                        <th>Sector Id: </th>
                                         <th> @item.CategoryId</th>
                                     </tr>
 
                                     <tr>
-                                        <td>Category: </td>
+                                        <td>Sector Name: </td>
                                         <td>@item.CategoryName</td>
                                     </tr>
 
@@ -41,7 +122,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <a asp-action="EditCategory" asp-controller="Admin" asp-route-id="@item.CategoryId" class="button">Manage Category</a>
+                        <a asp-action="EditCategory" asp-controller="Admin" asp-route-id="@item.CategoryId" class="button">Manage Sector</a>
                     }
 
                 }
@@ -49,13 +130,13 @@
                 {
                     <div class="card">
                         <div class="header">
-                            No Categories Created Yet!!
+                            No Sectors Created Yet!!
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">
-                                Use the button below to create a new category
+                                Use the button below to create a new sector
                             </h5>
-                            <a class="btn btn-primary" asp-controller="Admin" asp-action="AddCategory">Add a New Category</a>
+                            <a class="btn btn-primary" asp-controller="Admin" asp-action="AddCategory">Add a New Sector</a>
 
                         </div>
                     </div>

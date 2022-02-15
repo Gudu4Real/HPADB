@@ -1,69 +1,149 @@
-﻿@model IEnumerable<COHApp.Data.Models.ServiceRequest> 
+﻿@model IEnumerable<COHApp.Data.Models.ServiceRequest>
 
 
 
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>My Requests</title>
+
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        //Area Chart configuration
+        function drawChart() {
+            var areaChartData = google.visualization.arrayToDataTable([
+                ['Year', 'Company 1', 'Company 2', 'Company 3'],
+                ['2018', 8.4, 7.9, 6.3],
+                ['2019', 6.9, 6.5, 4.4],
+                ['2020', 6.5, 6.4, 2.0],
+                ['2021', 4.4, 6.2, 9.1]
+            ]);
+
+            var areaChartOptions = {
+                backgroundColor: '#ddd',
+                legend: { position: 'bottom' },
+                connectSteps: false,
+                colors: ['#4374E0', '#53A8FB', '#F1CA3A', '#E49307'],
+                isStacked: true,
+            };
+
+
+            // Some raw data (not necessarily accurate)
+            var data = google.visualization.arrayToDataTable([
+                ['Revenue Sources', 'Km 000'],
+                ['Company 1', 12],
+                ['Company 2', 27],
+                ['Company 3', 7],
+            ]);
+
+            var options = {
+                title: 'Revenue Contribution',
+                is3D: true,
+            };
+
+            //Drawing the graphs
+            var areaChart = new google.visualization.SteppedAreaChart(document.getElementById('area_chart_div'));
+            areaChart.draw(areaChartData, areaChartOptions);
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+
+        }
+    </script>
 </head>
 
 
 <div id="main">
     <div id="wrapper">
         <div class="inner">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Request ID</th>
-                        <th>Name</th>
-                        <th class="text-right">Date</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Any())
-                    {
-                        @foreach (var line in Model)
-                        {
-                            <tr>
-                                <td class="text-center">@line.ServiceRequestId</td>
-                                <td class="text-left">@line.ApplicantName</td>
-                                <td class="text-right">
-                                    @line.ApplicationDate)
-                                </td>
-                                <td class="text-left">@line.Status</td>
-                                <td class="text-center"><a class="btn btn-primary" asp-controller="ServiceRequest" asp-action="ViewRequest" asp-route-requestId="@line.ServiceRequestId">View</a></td>
-                            </tr>
-                        }
-                    }
-                    else
+
+            <header class="major">
+                <h1>Consilidated Report</h1>
+            </header>
+
+            <div class="row">
+                <div class="col-3 col-12-medium square">
+                    <a href="#">
+                        <h2>Total Revenue</h2>
+                        <h3>4 Million</h3>
+                    </a>
+                </div>
+
+                <div class="col-3 col-12-medium square">
+                    <a href="#" class="link">
+                        <h2>Total Staff Count</h2>
+                        <h3>387</h3>
+                    </a>
+                </div>
+
+                <div class="col-3 col-12-medium square ">
+                    <a href="#" class="link">
+                        <h2>Operating Costs</h2>
+                        <h3>2.3 Million</h3>
+                    </a>
+                </div>
+
+                <div class="col-3 col-12-medium square">
+                    <h2>Gross Profit</h2>
+                    <h3>700 000</h3>
+                </div>
+            </div>
+
+            <div id="chart_div" style="width: 100%; height: 600px;"></div>
+
+            <div id="area_chart_div" style="width: 100%; height: 600px;"></div>
+
+
+
+            @*<table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Name</th>
+                    <th class="text-right">Date</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var line in Model)
                     {
                         <tr>
-                            <div class="card">
-                                <div class="header">
-                                    No Service Requests Made Yet
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                       Have a look at the services we have on offer. 
-                                    </h5>
-                                    <a class="btn btn-primary" asp-controller="Home" asp-action="OnDemandIndex">Services</a>
-
-                                </div>
-                            </div>
+                            <td class="text-center">@line.ServiceRequestId</td>
+                            <td class="text-left">@line.ApplicantName</td>
+                            <td class="text-right">
+                                @line.ApplicationDate)
+                            </td>
+                            <td class="text-left">@line.Status</td>
+                            <td class="text-center"><a class="btn btn-primary" asp-controller="ServiceRequest" asp-action="ViewRequest" asp-route-requestId="@line.ServiceRequestId">View</a></td>
                         </tr>
                     }
-                </tbody>
-            </table>
+                }
+                else
+                {
+                    <tr>
+                        <div class="card">
+                            <div class="header">
+                                No Service Requests Made Yet
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                   Have a look at the services we have on offer.
+                                </h5>
+                                <a class="btn btn-primary" asp-controller="Home" asp-action="OnDemandIndex">Services</a>
+
+                            </div>
+                        </div>
+                    </tr>
+                }
+            </tbody>
+        </table>
+            *@
         </div>
     </div>
 </div>
 
-
-<script src="~/lib/jquery/jquery.js"></script>
-
-@section Scripts{
-
-}
 

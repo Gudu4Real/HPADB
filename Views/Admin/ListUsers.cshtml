@@ -1,83 +1,150 @@
 ﻿@model COHApp.ViewModels.ListUsersViewModel
 
 @{
-    Layout = "~/Views/Shared/_SearchBarLayout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>ListUsers</title>
+
+    <script type="text/javascript">
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Roles', 'Number of Users'],
+                ['@Model.Roles.ToList()[0]', @Model.RoleUserCount[Model.Roles.ToList()[0].ToString()]],
+                ['@Model.Roles.ToList()[1]', @Model.RoleUserCount[Model.Roles.ToList()[1].ToString()]],
+                ['@Model.Roles.ToList()[2]', @Model.RoleUserCount[Model.Roles.ToList()[2].ToString()]],
+                ['@Model.Roles.ToList()[3]', @Model.RoleUserCount[Model.Roles.ToList()[3].ToString()]]
+            ]);
+
+            var options = {
+                title: 'Role Distribution',
+                pieHole: 0.4,
+            };
+
+            var pieChartData = google.visualization.arrayToDataTable([
+                ['Users', 'Verification'],
+                ['Verified', @Model.VerifiedUsers],
+                ['Unverfied', (@Model.Users.Count() - @Model.VerifiedUsers)]
+            ]);
+
+            var pieChartOptions = {
+                legend: 'none',
+                pieSliceText: 'label',
+                title: 'User Verification',
+                pieStartAngle: 100,
+            };
+
+            var piechart = new google.visualization.PieChart(document.getElementById('piechart'));
+            piechart.draw(pieChartData, pieChartOptions);
+
+            var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+            chart.draw(data, options);
+        }
+    </script>
 </head>
 <body>
     <div id="main">
         <div id="wrapper">
             <div class="inner">
                 <header class="major">
-                    <h1>@ViewBag.Role</h1>
+                    <h1>Users Dashboard</h1>
                 </header>
-                @if (Model.Users.Any())
-                {
-                    <a class="btn btn-primary" asp-controller="Account" asp-action="Register"> Add a new user</a>
-                    <a asp-action="ListRoles" asp-controller="Admin" class="btn btn-primary">Manage User Roles</a>
+                <!-- Display Data -->
+                <div class="row gtr-200">
+                    <div class="col-6 col-12-medium">
 
-                    <div class="dropdown-menu">
-                        @if (Model.Roles.Any())
-                        {
-                            @foreach (var role in Model.Roles)
+                        <h2>Total Application Users</h2>
+                        <h3>@Model.Users.Count()</h3>
+
+                        <h3>User Role Distribution</h3>
+                        <div class="row">
+
+                            <div class="col-6 col-12-small">
+                                <div id="donutchart" style="width: 900px; height: 500px;"></div>
+                            </div>
+
+                            <div class="col-6 col-12-small">
+                                <div id="piechart" style="width: 500px; height: 500px;"></div>
+                            </div>
+                        </div>
+                        <br/>
+                        <a class="button special" asp-controller="Account" asp-action="Register"> Add a new user</a>
+
+                    </div>
+                </div>
+
+                @if (Model.Users.Any())
+                    {
+                        <a class="btn btn-primary" asp-controller="Account" asp-action="Register"> Add a new user</a>
+                        <a asp-action="ListRoles" asp-controller="Admin" class="btn btn-primary">Manage User Roles</a>
+
+                        <div class="dropdown-menu">
+                            @if (Model.Roles.Any())
                             {
-                                <a asp-controller="Admin" asp-action="ListUsers" asp-route-role="@role.Name"> @role.Name</a>
+                                @foreach (var role in Model.Roles)
+                                {
+                                    <a asp-controller="Admin" asp-action="ListUsers" asp-route-role="@role.Name"> @role.Name</a>
+                                }
+
+                                <a asp-controller="Admin" asp-action="ListUsers" >All Users</a>
+
+
                             }
 
-                            <a asp-controller="Admin" asp-action="ListUsers" >All Users</a>
-
-
-                        }
-
-                    </div>
-
-                    foreach (var user in Model.Users)
-                    {
-                        <div class="table-wrapper">
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <th>User: </th>
-                                        <th>@user.Id</th>
-                                    </tr>
-
-                                    <tr>
-                                        <td>Username: </td>
-                                        <td> @user.UserName</td>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
 
-                        <div class="actions">
-                            <form asp-action="DeleteUser" asp-route-id="@user.Id" method="post">
-                                <a asp-action="ManageUser" asp-controller="Admin" asp-route-id="@user.Id" class="btn button">Manage User</a>
-                                <button type="submit" class="btn button special" onclick="return confirm('Are you sure you want to delete the user: @user.UserName')">Delete</button>
-                            </form>
+                        foreach (var user in Model.Users)
+                        {
+                            <div class="table-wrapper">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <th>User: </th>
+                                            <th>@user.Id</th>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Username: </td>
+                                            <td> @user.UserName</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="actions">
+                                <form asp-action="DeleteUser" asp-route-id="@user.Id" method="post">
+                                    <a asp-action="ManageUser" asp-controller="Admin" asp-route-id="@user.Id" class="btn button">Manage User</a>
+                                    <button type="submit" class="btn button special" onclick="return confirm('Are you sure you want to delete the user: @user.UserName')">Delete</button>
+                                </form>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="card">
+                            <div class="header">
+                                No such users
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    Use the button below to create a new user
+                                </h5>
+                                <a class="btn button" asp-controller="Admin" asp-action="ListUsers">All Users</a>
+
+                            </div>
                         </div>
                     }
-                }
-                else
-                {
-                    <div class="card">
-                        <div class="header">
-                            No such users
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                Use the button below to create a new user
-                            </h5>
-                            <a class="btn button" asp-controller="Admin" asp-action="ListUsers">All Users</a>
-
-                        </div>
-                    </div>
-                }
             </div>
         </div>
     </div>
 </body>
 </html>
+
+
+
+

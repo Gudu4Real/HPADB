@@ -1,0 +1,59 @@
+﻿@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> signInManager
+@model COHApp.ViewModels.ListFacilitiesViewModel
+
+<div id="main">
+    <div id="wrapper">
+        <div class="inner">
+            <header class="major">
+                <h1>Companies</h1>
+            </header>
+
+            @*            <div class="elementor-widget-container">
+            <div class="elementor-button-wrapper">
+                @await Component.InvokeAsync("CategoryMenu")
+            </div>
+        </div>*@
+
+            @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+            {
+                <a asp-action="Create" asp-controller="HPAFacility" class="button" role="button">Add</a>
+            }
+
+
+            @if (Model.Facilities.Any())
+            {
+                <div class="row">
+                    <div class="table-wrapper">
+                        <table>
+                            @foreach (var item in Model.Facilities)
+                            {
+                                @await Html.PartialAsync("RentalAssetSummary", item);
+                                <br/>
+                            }
+                        </table>
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+                    <main role="main" class="inner cover">
+                        <h1 class="cover-heading">Empty Sector</h1>
+                        <p class="lead">It seems that this sector is currently empty, Why not add try our other sector</p>
+                        <p class="lead">
+                            <a asp-action="List" asp-controller="HPAFacility" class="btn btn-lg btn-secondary">Home</a>
+                        </p>
+                    </main>
+
+                    <footer class="mastfoot mt-auto">
+                        <div class="inner">
+                        </div>
+                    </footer>
+                </div>
+
+            }
+        </div>
+    </div>
+</div>
+

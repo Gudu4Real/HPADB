@@ -21,17 +21,25 @@ namespace BataCMS.Controllers
 
         private readonly IServiceTypeRepository _serviceTypeRepository;
         private readonly IHPAFacilityRepository _HPAFacilityRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
 
 
-        public HomeController( IServiceTypeRepository serviceTypeRepository, IHPAFacilityRepository hPAFacilityRepository)
-        {;
+
+        public HomeController( IServiceTypeRepository serviceTypeRepository, IHPAFacilityRepository hPAFacilityRepository, ICategoryRepository categoryRepository)
+        {
             _serviceTypeRepository = serviceTypeRepository;
-            _HPAFacilityRepository = hPAFacilityRepository; 
+            _categoryRepository = categoryRepository;
+            _HPAFacilityRepository = hPAFacilityRepository;
         }
         public ViewResult Index()
         {
-            return View();
+            var homeViewModel = new HomeViewModel
+            {
+                Sectors = _categoryRepository.Categories
+            };
+
+            return View(homeViewModel);
         }
 
 
@@ -39,15 +47,30 @@ namespace BataCMS.Controllers
         {
             var homeViewModel = new HomeViewModel
             {
-                ServiceTypes = _serviceTypeRepository.ServiceTypes
+                Sectors = _categoryRepository.Categories
             };
 
             return View(homeViewModel);
         }
 
-        public ViewResult BulletinIndex()
+        public ViewResult BulletinIndex(int categoryId)
         {
-            return View();
+            IEnumerable<HPAFacility> companies = new List<HPAFacility>();
+            Category sector = new Category();
+
+            if (categoryId != 0)
+            {
+                sector = _categoryRepository.Categories.FirstOrDefault(p => p.CategoryId == categoryId);
+                companies = _HPAFacilityRepository.HPAFacilities.Where(p => p.CategoryId == sector.CategoryId);
+
+            }
+
+            var vm = new BulletinHomeViewModel
+            {
+                SectorName = sector.CategoryName,
+                Companies = companies
+            };
+            return View(vm);
         }
 
 

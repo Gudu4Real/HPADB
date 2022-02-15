@@ -26,7 +26,7 @@
                     <thead>
                         <tr>
                             <th>Application ID</th>
-                            <th>Applicant Name</th>
+                            <th>Company Name</th>
                             <th class="text-right">Application Date</th>
                             <th></th>
                         </tr>
@@ -42,7 +42,7 @@
                                     <td class="text-right">
                                         @line.ApplicationDate)
                                     </td>
-                                    <td class="text-center"><a class="btn btn-primary" asp-controller="VendorApplication" asp-action="ViewApplication" asp-route-applicationId="@line.MemberApplicationId"> View</a></td>
+                                    <td class="text-center"><a class="btn btn-primary" asp-controller="MemberApplication" asp-action="ViewApplication" asp-route-applicationId="@line.MemberApplicationId"> View</a></td>
                                 </tr>
                             }
                         }

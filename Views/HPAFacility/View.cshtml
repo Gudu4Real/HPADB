@@ -1,0 +1,200 @@
+﻿@model COHApp.ViewModels.TransactionsDashboardViewModel
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Company Dashboard</title>
+
+    <script type="text/javascript">
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.load('current', { 'packages': ['bar'] });
+@*        google.charts.load("current", { packages: ["calendar"] });*@
+        google.charts.setOnLoadCallback(drawChart);
+
+        var bargraphDataArray = new Array();
+        bargraphDataArray.push(["Facility", "Price", { role: "style" }]);
+
+        @foreach (var item in Model.FacilityPricing)
+        {
+            @:bargraphDataArray.push(["@item.Key", @item.Value, "yellow"]);
+        }
+
+        console.log(bargraphDataArray);
+
+@*
+        var dataArray = new Array();
+        dataArray.push(["PaymentMethod", "SalesVolume"]);
+
+        @foreach (var item in Model.SaleTypes)
+        {
+            @:dataArray.push(["@item.Key", @item.Value]);
+        }
+*@
+@*        var chartDataArray = new Array();
+
+        @foreach (var item in Model.Transactions)
+        {
+            @:chartDataArray.push([new Date(@item.TransactionDate.Year,@item.TransactionDate.Month,@item.TransactionDate.Day), @item.TransactionTotal ]);
+        }*@
+
+
+        function drawChart() {
+
+
+            var data = google.visualization.arrayToDataTable([
+                ['Year', 'Sales', 'Expenses', 'Profit'],
+                ['2017', 1000, 400, 200],
+                ['2018', 1170, 460, 250],
+                ['2019', 660, 1120, 300],
+                ['2020', 1030, 540, 350]
+            ]);
+
+            var options = {
+                chart: {
+                    title: 'Performance',
+                    subtitle: 'Sales, Expenses, and Profit: 2017-2020',
+                },
+                bars: 'horizontal' // Required for Material Bar Charts.
+            };
+
+
+            var chart = new google.charts.Bar(document.getElementById('barchart_material'));
+
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+
+
+            //Donut configs
+@*            var donutData = google.visualization.arrayToDataTable(dataArray);
+
+            var donutOptions = {
+                title: 'Sale Distribution',
+                pieHole: 0.4,
+            };*@
+
+            //Bar graph configs
+            var data = google.visualization.arrayToDataTable([
+                ['Years', 'Values', { role: 'style' }],
+                ['2021', @Model.AssetValue2021, 'red'],
+                ['2022', @Model.AssetValue2022, 'green'],
+                ['Variance', @(Model.AssetValue2022 - Model.AssetValue2021), "blue"]
+            ]);
+            var view = new google.visualization.DataView(data);
+            view.setColumns([0, 1,
+                {
+                    calc: "stringify",
+                    sourceColumn: 1,
+                    type: "string",
+                    role: "annotation"
+                },
+                2]);
+            var bargraphOptions = {
+                title: "Asset Values in $USD",
+                width: 720,
+                height: 500,
+                bars: 'vertical',
+                legend: { position: "none" },
+            };
+
+            //Chart configurations
+@*            var chartData = new google.visualization.DataTable();
+            chartData.addColumn({ type: 'date', id: 'Date' });
+            chartData.addColumn({ type: 'number', id: 'Sales Volume' });
+            chartData.addRows(chartDataArray);
+
+            var chartOptions = {
+                title: "Daily Sales Volume",
+                height: 350,
+            };
+*@
+
+@*            //pie chart configs
+            var pieChartData = google.visualization.arrayToDataTable([
+                ['Users', 'Verification'],
+                ['Unsupervised', @Model.UserCount],
+                ['Supervised', (@Model.Transactions.Count() - @Model.UserCount)]
+            ]);
+
+            var pieChartOptions = {
+                legend: 'none',
+                pieSliceText: 'label',
+                title: 'User Verification',
+                pieStartAngle: 100,
+            };
+*@
+@*            var calenderchart = new google.visualization.Calendar(document.getElementById('calendar_basic'));
+            calenderchart.draw(chartData, chartOptions);
+
+            var piechart = new google.visualization.PieChart(document.getElementById('piechart'));
+            piechart.draw(pieChartData, pieChartOptions);
+
+            var donutChart = new google.visualization.PieChart(document.getElementById('donutchart'));
+            chart.draw(donutData, donutOptions);*@
+
+            var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+            chart.draw(view, bargraphOptions);
+        }
+    </script>
+</head>
+
+<body>
+    <div id="main">
+        <div id="wrapper">
+            <div class="inner">
+
+                <header class="major">
+                    <h1>@Model.HPAFacility.Name</h1>
+                </header>
+
+                <div class="row">
+                    <div class="col-3 col-12-medium square link">
+                        <a asp-action="ListTransactions" asp-controller="Transaction" class="link">
+                            <h2>Total Revenue</h2>
+                            <h3>@Model.TotalSales</h3>
+                        </a>
+                    </div>
+
+                    <div class="col-3 col-12-medium square link">
+                        <a asp-action="ListUsers" asp-controller="Admin" class="link">
+                            <h2>Total Staff Count</h2>
+                            <h3>@Model.UserCount</h3>
+                        </a>
+                    </div>
+
+                    <div class="col-3 col-12-medium square link">
+                        <a asp-action="List" asp-controller="DispatchedService" class="link">
+                            <h2>Operating Costs</h2>
+                            <h3>@Model.OpCosts</h3>
+                        </a>
+                    </div>
+
+                    <div class="col-3 col-12-medium square">
+                        <h2>Gross Profit</h2>
+                        <h3>@(Model.TotalSales - Model.OpCosts)</h3>
+                    </div>
+
+                    <div class="col-6 col-12-small" style="padding: 0;">
+                        <div id="barchart_material" style="width: 800px; height: 500px;"></div>
+                    </div>
+
+                    <div class="col-6 col-12-small" style="padding-left: 10px;">
+                        <div id="barchart_values" style="width: 500px; height: 500px;"></div>
+                    </div>
+
+                </div>
+
+                @*
+
+                    <div class="col-6 col-12-small">
+                        <div id="piechart" style="width: 500px; height: 500px;"></div>
+                    </div>
+
+                    <br />
+                    <br />
+
+                    <h3>Sale Date Distribution</h3>
+                    <div class="row">
+
+                    </div>*@
+            </div>
+        </div>
+    </div>
+</body>

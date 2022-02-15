@@ -5,12 +5,11 @@ using BataCMS.ViewModels;
 using COHApp.Data.Interfaces;
 using COHApp.Data.Models;
 using COHApp.ViewModels;
+using HPADB.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -87,7 +86,7 @@ namespace COHApp.Controllers
                 if (existingCategory == null)
                 {
                     await _categoryRepository.AddCategoryAsync(category);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("ListCategories", "Admin");
 
                 }
                 else
@@ -101,9 +100,24 @@ namespace COHApp.Controllers
 
         [HttpGet]
         public IActionResult ListCategories()
-        {
-            var categories = _categoryRepository.Categories;
-            return View(categories);
+        { 
+            Dictionary<string, decimal> facilityPricing = new Dictionary<string, decimal>();
+            IEnumerable<Category> sectors;
+
+            sectors = _categoryRepository.Categories;
+
+            foreach (var item in _HPAFacilityRepository.HPAFacilities)
+            {
+                facilityPricing.Add(item.Name, item.Price);
+            }
+
+            ListCategoriesViewModel vm = new ListCategoriesViewModel()
+            {
+                Sectors = sectors,
+                FacilityPricing = facilityPricing,
+                AvailableFacilities = _HPAFacilityRepository.HPAFacilities.Where(p => p.IsAvailable == true).Count(),
+            };
+            return View(vm);
         }
 
         [HttpGet]
@@ -174,7 +188,9 @@ namespace COHApp.Controllers
 
             string _role = role;
             IEnumerable<ApplicationUser> users;
-            
+            Dictionary<string, int> roleUserCount = new Dictionary<string, int>();
+
+
             if (!string.IsNullOrEmpty(role))
             {
                 users = _userManager.GetUsersInRoleAsync(role).Result;
@@ -189,11 +205,20 @@ namespace COHApp.Controllers
 
             var roles = _roleManager.Roles;
 
-            var vm = new ListUsersViewModel 
+
+            foreach (var item in roles.ToList())
+            {
+                roleUserCount.Add(item.ToString(), _userManager.GetUsersInRoleAsync(item.ToString()).Result.Count);
+
+            }
+
+
+            var vm = new ListUsersViewModel
             {
                 Users = users,
                 Roles = roles,
-
+                RoleUserCount = roleUserCount,
+                VerifiedUsers = _userManager.Users.Where(p => p.PhoneNumberConfirmed == true).Count(),
             };
 
             return View(vm);
@@ -341,7 +366,6 @@ namespace COHApp.Controllers
             };
             return View(model);
         }
-
 
         
         public async Task<IActionResult> DeleteUserAsync(string id)

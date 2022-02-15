@@ -23,7 +23,7 @@
 
         <div id="wrapper">
             <div class="inner">
-                <h2>Vendor Application</h2>
+                <h2>View Application</h2>
                 <br />
                 <h3>Application No: @Model.VendorApplicationId</h3>
                 <br />
@@ -56,6 +56,12 @@
                     </div>
                 </div>
 
+                <div class="card mb-3">
+                    <div class="card-header">Company</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.CompanyName </h5>
+                    </div>
+                </div>
 
                 <div class="6u 12u$(medium)">
                     <h4>ID Proof</h4>
@@ -66,14 +72,14 @@
                 </div>
 
 
-                @if (User.IsInRole("Employee"))
+                @if (User.IsInRole("Admin"))
                 {
 
                     <a class="button" asp-action="ApplicationApproval" asp-route-applicationId="@Model.VendorApplicationId"> Approve Application</a>
                     <button onclick="DisplayForm()" class="btn btn btn-danger">Decline Application</button>
 
 
-                    <form id="FormDecline" method="post" asp-action="DeclineApplication" asp-controller="VendorApplication">
+                    <form id="FormDecline" method="post" asp-action="DeclineApplication" asp-controller="MemberApplication">
 
                         <input type="hidden" asp-for="VendorApplicationId" class="form-control custom-file-input" value=" @Model.VendorApplicationId" />
 
@@ -90,7 +96,7 @@
                 }
                 else if (User.IsInRole("User"))
                 {
-                    <a asp-action="Edit" asp-controller="VendorApplication" asp-route-applicationId="@Model.VendorApplicationId" type="button" class="btn btn button">Edit</a>
+                    <a asp-action="Edit" asp-controller="MemberApplication" asp-route-applicationId="@Model.VendorApplicationId" type="button" class="btn btn button">Edit</a>
                 }
             </div>
 

@@ -1,12 +1,10 @@
 ﻿@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> signInManager
 @model BataCMS.Data.Models.HPAFacility
-
-<span class="image fit"><img src="@Model.ImageUrl" alt="" /></span>
-<div class="box alt">
-    <h3>@Model.Location</h3>
-    <h3>@Model.Category.CategoryName</h3>
+@*<div class="row">*@
+@*    <h3>@Model.Location</h3>
+    <h3>@Model.Name</h3>
     <br>
-    <a id="cartButton" asp-controller="RentalAsset" asp-action="View" asp-route-itemId="@Model.HPAFacilityId" type="button" class="btn button">View</a>
+    <a id="cartButton" asp-controller="HPAFacility" asp-action="View" asp-route-facilityId="@Model.HPAFacilityId" type="button" class="btn button">View</a>
 
     @if (signInManager.IsSignedIn(User) && User.IsInRole("Vendor") && Model.IsAvailable == true)
     {
@@ -15,10 +13,10 @@
         </ul>
     }
 
-    @if (signInManager.IsSignedIn(User) && User.IsInRole("Employee"))
+    @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
     {
 
-        <br /><a asp-action="Edit" asp-controller="RentalAsset" asp-route-id="@Model.HPAFacilityId" type="button" class="btn button">Edit</a>
+        <br /><a asp-action="Edit" asp-controller="HPAFacility" asp-route-facilityId="@Model.HPAFacilityId" type="button" class="btn button">Edit</a>
 
         <ul class="actions">
             <li><br /><a asp-action="CashBooking" asp-controller="Lease" asp-route-rentalAssetId="@Model.HPAFacilityId" type="button" class="btn button special"> Cash Booking</a></li>
@@ -35,10 +33,32 @@
     {
         <br /><a asp-action="EndBooking" asp-controller="RentalAsset" asp-route-id="@Model.HPAFacilityId" type="button" class="btn button">Invoice</a>
 
-    }
-</div>
+    }*@
+
+<tr>
+    <th>Company Name </th>
+    <th> @Model.Name</th>
+</tr>
+
+<tr>
+    <td>Sector: </td>
+    <td>@Model.Category.CategoryName</td>
+</tr>
+
+<tr>
+    <td>Description </td>
+    <td> @Model.Description</td>
+</tr>
+@if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+{
+    <tr>
+        <td><a asp-action="Edit" asp-controller="HPAFacility" asp-route-facilityId="@Model.HPAFacilityId" class="button">Manage Sector</a></td>
+    </tr>
+
+}
 
 
 
 
-
+@*    </div>*@
+<!--</div>-->

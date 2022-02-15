@@ -11,6 +11,8 @@
     <link href="~/dist/font-awesome.min.css" rel="stylesheet" />
     <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
     <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 </head>
 <body>
 
@@ -110,10 +112,7 @@
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/site.js"></script>
     <script src="~/js/main.js"></script>
-
-
-
-
+    <script src="~/js/loader.js"></script>
 
     <script>
         //an immediately invoked function that checks to see if the text is in local storage already
@@ -123,7 +122,7 @@
                 console.log(localStorage.orderCount);
                 document.getElementById('orderCount').innerHTML = localStorage.getItem("orderCount");
             }
-        })();
+            })();
     </script>
 
     @if (IsSectionDefined("Scripts"))

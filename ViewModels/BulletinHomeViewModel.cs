@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace BataCMS.ViewModels
 {
-    public class HomeViewModel
+    public class BulletinHomeViewModel
     {
-        public IEnumerable<Category> Sectors { get; set; }    
+        public IEnumerable<HPAFacility> Companies { get; set; }
+
+        public string SectorName { get; set; }
     }
 }

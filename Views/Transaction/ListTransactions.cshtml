@@ -4,26 +4,87 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Completed Bookings</title>
+
+    <script type="text/javascript">
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.load("current", { packages: ["calendar"] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        var dataArray = new Array();
+        dataArray.push(["PaymentMethod", "SalesVolume"]);
+
+        @foreach (var item in Model.SaleTypes)
+        {
+            @:dataArray.push(["@item.Key", @item.Value]);
+        }
+
+        var chartDataArray = new Array();
+
+        @foreach (var item in Model.Transactions)
+        {
+            @:chartDataArray.push([new Date(@item.TransactionDate.Year,@item.TransactionDate.Month,@item.TransactionDate.Day), @item.TransactionTotal ]);
+        }
+
+
+        function drawChart() {
+
+            //Donut configs
+            var donutData = google.visualization.arrayToDataTable(dataArray);
+
+            var donutOptions = {
+                title: 'Sale Distribution',
+                pieHole: 0.4,
+            };
+
+            //Chart configurations
+            var chartData = new google.visualization.DataTable();
+            chartData.addColumn({ type: 'date', id: 'Date' });
+            chartData.addColumn({ type: 'number', id: 'Sales Volume' });
+            chartData.addRows(chartDataArray);
+
+            var chartOptions = {
+                title: "Daily Sales Volume",
+                height: 500,
+            };
+
+
+            //Draw the calendar
+            var calenderchart = new google.visualization.Calendar(document.getElementById('calendar_basic'));
+            calenderchart.draw(chartData, chartOptions);
+
+            var donutChart = new google.visualization.PieChart(document.getElementById('donutchart'));
+            donutChart.draw(donutData, donutOptions);
+
+        }
+    </script>
 </head>
 
 <div id="main">
     <div id="wrapper">
         <div class="inner">
-            <form method="post" asp-action="PostExportExcel">
-                <button class="button special">ExportExcel</button>
-            </form>
 
-            <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">List Transactions from...</button>
+            <header class="major">
+                <h1>Sales Dashboard</h1>
+            </header>
 
-            <div class="dropdown-menu">
-                <a class="dropdown-item" asp-controller="Transaction" asp-action="ListTransactions" asp-route-filter="hour">Last hour</a>
-                <a class="divider"></a>
-                <a class="dropdown-item" asp-controller="Transaction" asp-action="ListTransactions" asp-route-filter="day">Last Day...</a>
-                <a class="divider"></a>
-                <a class="dropdown-item" asp-controller="Transaction" asp-action="ListTransactions" asp-route-filter="week">Last Week...</a>
-                <a class="divider"></a>
-                <a class="dropdown-item" asp-controller="Transaction" asp-action="ListTransactions" asp-route-filter="all">All</a>
+
+            <div class="col-6 col-12-small">
+                <form method="post" asp-action="PostExportExcel">
+                    <button class="button special">ExportExcel</button>
+                </form>
             </div>
+
+            <div class="row">
+                <div class="col-6 col-12-small">
+                    <div id="calendar_basic" style="width: 900px; height: 500px;"></div>
+                </div>
+
+                <div class="col-6 col-12-small">
+                    <div id="donutchart" style="width: 500px; height: 400px;"></div>
+                </div>
+
+            </div>
+
 
             <a type="button" class="button" asp-controller="Transaction" asp-action="ListTransactions" asp-route-type="cash">Cash Transactions</a>
 
@@ -31,15 +92,12 @@
 
             <a type="button" class="button" asp-controller="Transaction" asp-action="ListTransactions" asp-route-type="swipe">DebitCard Transactions</a>
 
-            </br>
-            </br>
-
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>Transaction ID</th>
                         <th>Transaction Type</th>
-                        <th class="text-right">Booking Date</th>
+                        <th class="text-right">Date</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -54,7 +112,7 @@
                                 <td class="text-right">
                                     @line.TransactionDate)
                                 </td>
-                                <td class="text-center"><a class="btn btn-primary" asp-controller="Transaction" asp-action="TransactionDetail" asp-route-id="@line.TransactionId">Transaction Details</a></td>
+                                @*        <td class="text-center"><a class="btn btn-primary" asp-controller="Transaction" asp-action="TransactionDetail" asp-route-id="@line.TransactionId">Transaction Details</a></td>*@
                             </tr>
                         }
 
@@ -66,11 +124,29 @@
                     else
                     {
                         <tr>
-                            <td class="text-center">No Booking Made Yet</td>
+                            <td class="text-center">No Sales Made Yet</td>
                         </tr>
                     }
                 </tbody>
             </table>
+
+            <div class="row">
+                <div class="col-6 col-12-small">
+                    <form enctype="multipart/form-data" method="post" asp-controller="Transaction" asp-action="ImportExcelFile">
+                        <dl>
+                            <dt>
+                                <label>Upload Excel:</label>
+                            </dt>
+                            <dd>
+                                <input type="file" name="upload" id="upload" class="form-control custom-file-input">
+                            </dd>
+                        </dl>
+                        <input class="button special" type="submit" value="Upload" />
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
+
 </div>

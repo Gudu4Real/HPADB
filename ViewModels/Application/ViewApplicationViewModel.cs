@@ -15,6 +15,7 @@ namespace BataCMS.ViewModels
         public string ResidenceProof { get; set; }
         public DateTime ApplicationDate { get; set; }
         public string RejectMessage { get; set; }
+        public string CompanyName { get; set; }
 
     }
 }

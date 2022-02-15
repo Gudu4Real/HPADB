@@ -1,6 +1,6 @@
 ﻿@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> signInManager
 @inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
-@model HomeViewModel
+@model BulletinHomeViewModel
 <head>
     <link href="~/Content/Home.css" rel="stylesheet" />
     <link href="~/Content/animations.css" rel="stylesheet" />
@@ -32,7 +32,7 @@
             <div class="inner">
                 <header class="major">
                     <h1>
-                        Bulletin Board
+                        @ViewBag.SectorName
                     </h1>
 
                 </header>
@@ -40,17 +40,17 @@
 
                     @if (!signInManager.IsSignedIn(User))
                     {
-                        <p>
+@*                        <p>
                             Sign Up To recieve notifications on updates from the City of Harare
                         </p>
-
-                        <a asp-controller="Account" asp-action="Register" class="button">Register</a>
+*@
+                        <!--<a asp-controller="Account" asp-action="Register" class="button">Register</a>-->
 
                     }
                     else
                     {
                         <p>
-                            View Announcents and Information from the City of Harare
+                           View details about the companies in this sector
                         </p>
                     }
 
@@ -65,34 +65,29 @@
             <section id="one" class="tiles">
 
                 <article>
-                    <span class="image">
-                        <img src="images/pic09.jpg" alt="" />
-                    </span>
                     <header class="major">
-                        <h3><a asp-action="List" asp-controller="Messages" class="link">Announcements</a></h3>
-                        <p>Messages from the City of Harare</p>
+                        <h3><a asp-action="MyRequests" asp-controller="ServiceRequest" asp-route-applicantId="@UserManager.GetUserId(User)" class="link">Consolidated Report</a></h3>
+                        <p>View  Sector Insights</p>
                     </header>
                 </article>
 
-                <article>
-                    <span class="image">
-                        <img src="images/pic09.jpg" alt="" />
-                    </span>
-                    <header class="major">
-                        <h3><a asp-action="List" asp-controller="WasteCollection" class="link">Garbage Collection</a></h3>
-                        <p>Information on waste management</p>
-                    </header>
-                </article>
+                @if (Model.Companies != null)
+                {
+                    @foreach (var item in Model.Companies)
+                    {
+                        <article>
+                            <span class="image">
+                                <img src="images/pic09.jpg" alt="" />
+                            </span>
+                            <header class="major">
+                                <h3><a asp-action="View" asp-controller="HPAFacility" asp-route-facilityId="@item.HPAFacilityId" class="link">@item.Name</a></h3>
+                                <p>View @item.Name Insights</p>
+                            </header>
+                        </article>
 
-                <article>
-                    <span class="image">
-                        <img src="images/pic09.jpg" alt="" />
-                    </span>
-                    <header class="major">
-                        <h3><a asp-action="List" asp-controller="WaterAvailability" class="link">Water Availability</a></h3>
-                        <p>Information on water availability</p>
-                    </header>
-                </article>
+                    }
+
+                }
 
             </section>
 

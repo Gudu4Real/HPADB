@@ -11,5 +11,7 @@ namespace COHApp.ViewModels
         public IEnumerable<Transaction> Transactions { get; set; }
 
         public decimal TotalSales { get; set; }
+
+        public Dictionary<string, int> SaleTypes { get; set; }
     }
 }

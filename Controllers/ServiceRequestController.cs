@@ -173,7 +173,7 @@ namespace COHApp.Controllers
             }
         }
 
-        [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         public IActionResult ListRequests(string filter)
         {
             IEnumerable<ServiceRequest> serviceRequests = null;

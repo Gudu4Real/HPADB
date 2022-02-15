@@ -11,6 +11,6 @@ namespace COHApp.Data.Models
     {
         public string CardNumber { get; set; }
         public string PhotoIDUrl { get; set; }
-        public List<HPAFacility> MemberFacilities { get; set; }
+        public List<HPAFacility> Companies { get; set; }
     }
 }

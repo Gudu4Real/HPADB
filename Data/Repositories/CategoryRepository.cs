@@ -16,7 +16,7 @@ namespace BataCMS.Data.Repositories
             _appDbContext = appDbContext;
         }
 
-        public IEnumerable<Category> Categories => _appDbContext.Categories;
+        public IEnumerable<Category> Categories => _appDbContext.Categories.Include(p => p.itemList);
 
         public async Task DeleteCategoryAsync (Category category)
         {

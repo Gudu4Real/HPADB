@@ -58,15 +58,15 @@
             <!-- One -->
             <section id="one" class="tiles">
 
-                @foreach (var item in Model.ServiceTypes)
+                @foreach (var item in Model.Sectors)
                 {
                     <article>
                         <span class="image">
                             <img src="images/pic09.jpg" alt="" />
                         </span>
                         <header class="major">
-                            <h3><a asp-action="Create" asp-controller="ServiceRequest" asp-route-serviceType="@item.ServiceTypeId" class="link">@item.ServiceName</a></h3>
-                            <p>@item.ServiceDescription</p>
+                            <h3><a asp-action="BulletinIndex" asp-controller="Home" asp-route-serviceType="@item.CategoryId" class="link">@item.CategoryName</a></h3>
+                            <p>@item.Description</p>
                         </header>
                     </article>
 

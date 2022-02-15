@@ -166,12 +166,12 @@ namespace BataCMS.Controllers
                         //add the user to User role by default. 
                         await _userManager.AddToRoleAsync(user, "User");
 
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-
                         if (_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                         {
                             return RedirectToAction("ListUsers", "Admin");
                         }
+
+                        await _signInManager.SignInAsync(user, isPersistent: false);
 
                         try
                         {

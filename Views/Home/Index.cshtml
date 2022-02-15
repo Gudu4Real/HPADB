@@ -40,7 +40,7 @@
                     }
                     else
                     {
-                        <h1>HPA Portal</h1>
+                        <h1>IDC Portal</h1>
                     }
 
                 </header>
@@ -55,8 +55,8 @@
                     else
                     {
                         <p>
-                            Welcome to the HPA Member Portal<br />
-                            Your portal to the Health Professions Association of Zimbabwe.
+                            Welcome to the IDC Reporting System<br />
+                            Your portal for IDC Data Monitoring
                         </p>
                     }
 
@@ -79,121 +79,92 @@
             <!-- One -->
             <section id="one" class="tiles">
 
-                <article>
-                    <header class="major">
-                        <h3><a asp-action="BulletinIndex" asp-controller="Home" class="link">Bulletin Board</a></h3>
-                        <p>View Information and Announcements from the Health Profession Association</p>
-                    </header>
-                </article>
+                @*                <article>
+            <header class="major">
+                <h3><a asp-action="BulletinIndex" asp-controller="Home" class="link">Bulletin Board</a></h3>
+                <p>View Information and Announcements from the Health Profession Association</p>
+            </header>
+        </article>
+                *@
+
 
                 @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                 {
                     <article>
                         <header class="major">
-                            <h3><a asp-action="ListUsers" asp-controller="Admin" class="link">User Management</a></h3>
-                            <p>Manage your appliction Users</p>
+                            <h3><a asp-action="ListRequests" asp-controller="ServiceRequest" asp-route-applicantId="@UserManager.GetUserId(User)" class="link">Consolidated Report</a></h3>
+                            <p>View IDC Insights</p>
                         </header>
                     </article>
 
-                    <article>
-                        <header class="major">
-                            <h3><a asp-action="ListCategories" asp-controller="Admin" class="link">Facility Management</a></h3>
-                            <p>Manage the HPA facilities</p>
-                        </header>
-                    </article>
-
-
-                    @*                    <article>
+                    foreach (var item in Model.Sectors)
+                    {
+                        <article>
                             <header class="major">
-                                <h3><a asp-action="BookedList" asp-controller="RentalAsset" class="link">View Booked Assets</a></h3>
-                                <p>Manage the Rental Assets</p>
+                                <h3><a asp-action="BulletinIndex" asp-controller="Home" asp-route-categoryId="@item.CategoryId" class="link">@item.CategoryName</a></h3>
+                                <p>@item.Description</p>
                             </header>
                         </article>
 
-                        <article>
-                            <header class="major">
-                                <h3><a asp-action="List" asp-controller="DispatchedService" class="link">View Dispatched Services</a></h3>
-                                <p>View Booking information</p>
-                            </header>
-                        </article>*@
-
-                    <article>
-                        <header class="major">
-                            <h3><a asp-action="ListTransactions" asp-controller="Transaction" class="link">Invoices</a></h3>
-                            <p>View Invoices</p>
-                        </header>
-                    </article>
-
-                    <article>
-                        <header class="major">
-                            <h3><a asp-action="ListServiceTypes" asp-controller="Admin" class="link">Reports</a></h3>
-                        </header>
-                    </article>
-
+                    }
                 }
 
                 @if (signInManager.IsSignedIn(User) && User.IsInRole("User"))
                 {
                     <article>
                         <header class="major">
-                            <h3><a asp-controller="VendorApplication" asp-action="create" class="link">Membership Application</a></h3>
-                            <p>Apply for HPA Membership</p>
+                            <h3><a asp-controller="MemberApplication" asp-action="Create" class="link">Membership Application</a></h3>
+                            <p>Apply for membership in a company</p>
                         </header>
                     </article>
 
                     <article>
                         <header class="major">
-                            <h3><a asp-action="MyApplications" asp-controller="VendorApplication" asp-route-applicantId="@UserManager.GetUserId(User)" class="link">My Applications</a></h3>
+                            <h3><a asp-action="MyApplications" asp-controller="MemberApplication" asp-route-applicantId="@UserManager.GetUserId(User)" class="link">My Applications</a></h3>
                             <p>View Current Status of Your Applications</p>
                         </header>
                     </article>
 
                     <article>
                         <header class="major">
-                            <h3><a asp-action="MyRequests" asp-controller="ServiceRequest" asp-route-applicantId="@UserManager.GetUserId(User)" class="link">View Facilities</a></h3>
-                            <p>View HPA Facilities</p>
+                            <h3><a asp-action="List" asp-controller="HPAFacility" class="link">View Companies</a></h3>
+                            <p>View IDC Companies</p>
                         </header>
                     </article>
 
-                    <article>
-                        <header class="major">
-                            <h3><a asp-action="OnDemandIndex" asp-controller="Home" class="link">View HPA Members</a></h3>
-                            <p>Search HPA Member information</p>
-                        </header>
-                    </article>
                     @*
-                        <article>
-                            <header class="major">
-                                <h3><a href="#" class="link">Book Venue Application</a></h3>
-                                <p>Nisl sed aliquam</p>
-                            </header>
-                        </article>*@
+            <article>
+                <header class="major">
+                    <h3><a href="#" class="link">Book Venue Application</a></h3>
+                    <p>Nisl sed aliquam</p>
+                </header>
+            </article>*@
 
                 }
 
-                @if (signInManager.IsSignedIn(User) && User.IsInRole("Employee"))
+                @if (signInManager.IsSignedIn(User) && User.IsInRole("HPAStaff"))
                 {
                     <article>
                         <header class="major">
-                            <h3><a asp-action="ListApplications" asp-controller="VendorApplication" class="link">Member Applications</a></h3>
+                            <h3><a asp-action="ListApplications" asp-controller="MemberApplication" class="link">Member Applications</a></h3>
                             <p>View Applications</p>
                         </header>
                     </article>
 
                     @*                    <article>
-                            <header class="major">
-                                <h3><a asp-action="ListRequests" asp-controller="ServiceRequest" class="link">View Facility Requests</a></h3>
-                                <p>View Pending Member Request to join a facility</p>
-                            </header>
-                        </article>
+                <header class="major">
+                    <h3><a asp-action="ListRequests" asp-controller="ServiceRequest" class="link">View Facility Requests</a></h3>
+                    <p>View Pending Member Request to join a facility</p>
+                </header>
+            </article>
 
-                        <article>
-                            <header class="major">
-                                <h3><a asp-action="BookedList" asp-controller="RentalAsset" class="link">View Booked Assets</a></h3>
-                                <p>Manage the Rental Assets</p>
-                            </header>
-                        </article>*@
-                    <article>
+            <article>
+                <header class="major">
+                    <h3><a asp-action="BookedList" asp-controller="RentalAsset" class="link">View Booked Assets</a></h3>
+                    <p>Manage the Rental Assets</p>
+                </header>
+            </article>*@
+@*                    <article>
 
                         <header class="major">
                             <h3><a asp-action="List" asp-controller="RentalAsset" class="link">Facilites</a></h3>
@@ -219,13 +190,13 @@
                         <header class="major">
                             <h3><a asp-action="ListServiceTypes" asp-controller="Admin" class="link">Reports</a></h3>
                         </header>
-                    </article>
+                    </article>*@
 
 
 
                 }
 
-                @if (signInManager.IsSignedIn(User) && User.IsInRole("Vendor"))
+                @if (signInManager.IsSignedIn(User) && User.IsInRole("Member"))
                 {
                     <article>
                         <header class="major">

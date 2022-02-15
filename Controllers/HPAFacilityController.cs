@@ -28,12 +28,13 @@ namespace COHApp.Controllers
         private readonly IMemberSubscriptionRepository _memberSubscriptionRepository;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IServiceRequestRepository _oDServiceRequestRepository;
+        private readonly IServiceTypeRepository _serviceTypeRepository;
 
 
 
-
-
-        public HPAFacilityController(IInvoiceRepository invoiceRepository, UserManager<ApplicationUser> userManager, ICategoryRepository categoryRepository, IWebHostEnvironment webHostEnvironment, IHPAFacilityRepository hPAFacilityRepository, IImageRepository imageRepository, IMemberCertificateRepository activeLeaseRepository, IMemberSubscriptionRepository memberSubscriptionRepository)
+        public HPAFacilityController(IServiceTypeRepository serviceTypeRepository,IServiceRequestRepository oDServiceRequestRepository, IInvoiceRepository invoiceRepository, UserManager<ApplicationUser> userManager, ICategoryRepository categoryRepository, IWebHostEnvironment webHostEnvironment, IHPAFacilityRepository hPAFacilityRepository, IImageRepository imageRepository, IMemberCertificateRepository activeLeaseRepository, IMemberSubscriptionRepository memberSubscriptionRepository, ITransactionRepository transactionRepository)
         {
             _categoryRepository = categoryRepository;
             _webHostEnvironment = webHostEnvironment;
@@ -43,8 +44,11 @@ namespace COHApp.Controllers
             _memberSubscriptionRepository = memberSubscriptionRepository;
             _userManager = userManager;
             _invoiceRepository = invoiceRepository;
+            _transactionRepository = transactionRepository;
+            _oDServiceRequestRepository = oDServiceRequestRepository;
+            _serviceTypeRepository = serviceTypeRepository;
 
-        }
+    }
 
 
         public ViewResult List(string category, string searchString)
@@ -161,8 +165,107 @@ namespace COHApp.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewAsync(int facilityId)
         {
+            IEnumerable<Transaction> transactions = null;
+            decimal totalSales = 0M;
+            Dictionary<string, int> saleTypes = new Dictionary<string, int>();
+            decimal opCosts = 0;
+            decimal assetValue2021 = 0;
+            decimal assetValue2022 = 0;
+
             HPAFacility facility = await _HPAFacilityRepository.GetItemByIdAsync(facilityId);
-            return View(facility);
+
+
+            string[] transactionTypes = new string[] { "Cash", "swipe", "ecocash" };
+
+
+            transactions = _transactionRepository.Transactions;
+            foreach (var item in transactionTypes)
+            {
+                saleTypes.Add(item, _transactionRepository.Transactions.Where((p => p.TransactionType == item)).Count());
+            }
+
+/*            if (!string.IsNullOrEmpty(type))
+            {
+                transactions = _transactionRepository.Transactions.Where((p => p.TransactionType == type));
+
+            }
+            else
+            {
+                if (String.IsNullOrEmpty(filter) || filter == "all")
+                {
+                    transactions = _transactionRepository.Transactions;
+                }
+                else
+                {
+                    if (filter == "hour")
+                    {
+                        transactions = _transactionRepository.Transactions.Where((p => p.TransactionDate >= (DateTime.Now.AddHours(-1))));
+                    }
+                    if (filter == "day")
+                    {
+                        transactions = _transactionRepository.Transactions.Where((p => p.TransactionDate >= (DateTime.Now.AddDays(-1))));
+                    }
+                    if (filter == "week")
+                    {
+                        transactions = _transactionRepository.Transactions.Where((p => p.TransactionDate >= (DateTime.Now.AddDays(-7))));
+                    }
+                }
+
+            }*/
+
+
+            foreach (var item in transactions)
+            {
+                totalSales += item.TransactionTotal;
+            }
+
+            //Calculating operating costs
+            List<int> serviceRequestID = new List<int>();
+            foreach (var item in _oDServiceRequestRepository.ODServiceRequests)
+            {
+                if (item.Status == "Dispatched")
+                {
+                    serviceRequestID.Add(item.ServiceTypeId);
+                }
+            }
+
+            foreach (var item in serviceRequestID)
+            {
+                var service = _serviceTypeRepository.ServiceTypes.First(p => p.ServiceTypeId == item);
+                opCosts += service.Pricing;
+            }
+            Dictionary<string, decimal> facilityPricing = new Dictionary<string, decimal>();
+            IEnumerable<HPAFacility> facilities;
+            facilities = _HPAFacilityRepository.HPAFacilities;
+            foreach (var item in facilities)
+            {
+                if (item.DateModified.Year == 2022)
+                {
+                    assetValue2022 += item.Price;
+                }
+                else
+                {
+                    assetValue2021 += item.Price;
+                }
+            }
+
+            foreach (var item in facilities)
+            {
+                facilityPricing.Add(item.Name, item.Price);
+            }
+
+            var vm = new TransactionsDashboardViewModel
+            {
+                HPAFacility = facility,
+                FacilityPricing = facilityPricing,
+                TotalSales = totalSales,
+                SaleTypes = saleTypes,
+                UserCount = _userManager.Users.Count(),
+                OpCosts = opCosts,
+                AssetValue2021 = assetValue2021,
+                AssetValue2022 = assetValue2022 + assetValue2021,
+            };
+            return View(vm);
         }
 
         [HttpGet]
@@ -184,24 +287,28 @@ namespace COHApp.Controllers
                 List<Image> assetImages = new List<Image>();
                 String mainPhotoPath = null;
 
-
-                if (model.Images.Count > 1)
+                if (model.Images != null)
                 {
-                    for (int i = 0; i < model.Images.Count; i++)
+                    if (model.Images.Count > 1)
                     {
-                        if (i == 0)
+                        for (int i = 0; i < model.Images.Count; i++)
                         {
-                            mainPhotoPath = ProcessUploadedImage(model.Images[i]);
-                            continue;
-                        }
+                            if (i == 0)
+                            {
+                                mainPhotoPath = ProcessUploadedImage(model.Images[i]);
+                                continue;
+                            }
 
-                        string photoPath = ProcessUploadedImage(model.Images[i]);
-                        Image image = new Image { ImageName = model.Images[i].FileName, ImageUrl = photoPath };
-                        assetImages.Add(image);
+                            string photoPath = ProcessUploadedImage(model.Images[i]);
+                            Image image = new Image { ImageName = model.Images[i].FileName, ImageUrl = photoPath };
+                            assetImages.Add(image);
+
+                        }
 
                     }
 
                 }
+
 
                 var category = _categoryRepository.Categories.FirstOrDefault(p => p.CategoryName == model.Category);
 
@@ -225,7 +332,7 @@ namespace COHApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditAsync(int id)
+        public async Task<IActionResult> EditAsync(int facilityId)
         {
             this.ViewData["categories"] = _categoryRepository.Categories.Select(x => new SelectListItem
             {
@@ -233,7 +340,7 @@ namespace COHApp.Controllers
                 Text = x.CategoryName
             }).ToList();
 
-            HPAFacility facility = await _HPAFacilityRepository.GetItemByIdAsync(id);
+            HPAFacility facility = await _HPAFacilityRepository.GetItemByIdAsync(facilityId);
             Category category = _categoryRepository.Categories.FirstOrDefault(p => p.CategoryId == facility.CategoryId);
 
             EditFacilityViewModel viewModel = new EditFacilityViewModel

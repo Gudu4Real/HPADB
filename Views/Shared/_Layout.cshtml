@@ -11,6 +11,7 @@
     <link href="~/dist/font-awesome.min.css" rel="stylesheet" />
     <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
     <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
 
@@ -31,22 +32,20 @@
                 </li>
 
                 <li class="nav-item">
-                    <a asp-action="ListCategories" asp-controller="Admin">Category Management</a>
+                    <a asp-action="ListCategories" asp-controller="Admin">Sector Management</a>
                 </li>
 
                 <li class="nav-item">
-                    <a asp-action="ListServiceTypes" asp-controller="Admin">Service Management</a>
+                    <a asp-action="List" asp-controller="HPAFacility">Company Management</a>
                 </li>
 
-
+                <li class="nav-item">
+                    <a asp-action="ListApplications" asp-controller="MemberApplication">Member Applications</a>
+                </li>
             }
 
             @if (signInManager.IsSignedIn(User) && User.IsInRole("Employee"))
             {
-                <li class="nav-item">
-                    <a asp-action="ListApplications" asp-controller="VendorApplication">Vendor Applications</a>
-                </li>
-
 
                 <li class="nav-item">
                     <a asp-action="List" asp-controller="RentalAsset">List Assets</a>
@@ -94,24 +93,18 @@
         }
 
     </nav>
+    
+    @RenderBody()
 
-
-
-    <div>
-
-        @RenderBody()
-    </div>
+    <script src="~/js/loader.js"></script>
     <script src="~/js/jquery.min.js"></script>
     <script src="~/js/skel.min.js"></script>
     <script src="~/js/util.js"></script>
     <script src="~/js/jquery.scrollex.min.js"></script>
     <script src="~/js/jquery.scrolly.min.js"></script>
-
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/site.js"></script>
     <script src="~/js/main.js"></script>
-
-
 
 
 
@@ -130,5 +123,15 @@
     {
         @RenderSection("Scripts", required: true)
     }
+
+@*    <footer id="footer">
+        <div class="inner">
+            <ul class="copyright">
+                <li>&copy; Untitled</li>
+                <li>Design: <a href="www.websforafrica.com">Webs for Africa Technologies</a></li>
+            </ul>
+        </div>
+    </footer>*@
 </body>
+
 </html>

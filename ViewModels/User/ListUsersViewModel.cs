@@ -13,5 +13,9 @@ namespace COHApp.ViewModels
 
         public IQueryable<IdentityRole> Roles { get; set; }
 
+        public Dictionary<string, int> RoleUserCount {get; set;}
+
+        public int VerifiedUsers { get; set; }
+
     }
 }
